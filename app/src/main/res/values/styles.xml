@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:textColor">@color/black</item> <!-- Чёрный текст -->
+    </style>
+
+    <style name="Style.App.CircleImageView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">32dp</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">70dp</item>
+    </style>
+
+    <style name="CustomBottomNavViewStyle" parent="Widget.Material3.BottomNavigationView">
+        <!-- Убираем активный индикатор -->
+        <item name="itemActiveIndicatorStyle">@style/EmptyIndicator</item>
+
+        <!-- Настраиваем компактный вид -->
+        <item name="itemPaddingTop">10dp</item>
+        <item name="itemPaddingBottom">10dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_height">56dp</item> <!-- Стандартная высота -->
+        <item name="android:background">@drawable/background_nav</item>
+
+    </style>
+
+    <style name="EmptyIndicator" parent="">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+    </style>
+
+    <style name="MyPopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/popup_background</item>
+    </style>
+
+    <style name="BottomSheetDialog_MaterialStyle" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Flat</item>
+        <item name="android:background">@drawable/bg_material_dialog</item>
+
+    </style>
+
+    <style name="ShapeAppearance.Flat" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="CustomDialogThemeFotSets" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.75</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="DialogSlideAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <style name="ScreenDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item> <!-- прозрачный статусбар -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowAnimationStyle">@style/DialogSlideAnimation</item>
+    </style>
+
+    <style name="CustomEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textSelectHandle">@drawable/transparent_handle</item>
+        <item name="android:textSelectHandleLeft">@drawable/transparent_handle</item>
+        <item name="android:textSelectHandleRight">@drawable/transparent_handle</item>
+    </style>
+
+
+</resources>

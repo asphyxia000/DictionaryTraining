@@ -1,0 +1,65 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/lineContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/setNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/editWeight"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="60dp"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:textSize="26sp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textCursorDrawable="@drawable/cursor"
+            style="@style/CustomEditTextStyle"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="кг ×"
+            android:textSize="20sp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <EditText
+            android:id="@+id/editReps"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:hint="0"
+            android:inputType="number"
+            android:background="@android:color/transparent"
+            android:textSize="26sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:textCursorDrawable="@drawable/cursor"
+            style="@style/CustomEditTextStyle"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorOutline" />
+</FrameLayout>

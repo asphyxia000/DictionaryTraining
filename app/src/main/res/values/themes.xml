@@ -1,0 +1,55 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.VKR2" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Основные цвета -->
+        <item name="colorPrimary">@color/black</item> <!-- Фон Toolbar -->
+        <item name="colorOnPrimary">#f3f3f3</item> <!-- Текст на Toolbar -->
+
+        <!-- Вторичные цвета -->
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Фон и текст -->
+        <item name="android:colorBackground">#f3f3f3</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Статус-бар -->
+        <item name="android:statusBarColor">#f3f3f3</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- В стилях темы -->
+
+    </style>
+
+    <color name="cardBackground">#FFFFFF</color>
+    <color name="Calendar">#000000</color>
+    <color name="CalendarSelect">#FFFFFF</color>
+    <color name="CalendarBack">@color/blue_500</color>
+    <color name="CalendarToday">@color/blue_500</color>
+    <color name="button_today_style">@color/blue_500</color>
+
+    <color name="textforexp1">#FF000000</color>
+
+    <color name="viewholder_exp">#FFFCFC</color>
+    <color name="textforexp2">@color/black</color>
+
+    <color name="chip_back">@android:color/transparent</color>
+    <color name="chip_text">@color/blue_500</color>
+    <color name="chip_selected_bg">@color/blue_500</color>
+
+    <color name="groupbtnforexecises">@color/black</color>
+    <color name="btnAdd1">@color/blue_500</color>
+
+    <color name="dialog_back">@color/white</color>
+    <color name="dialog_text">@color/black</color>
+    <color name="dialog_date_picker">#D9D9D9</color>
+
+    <color name="trainingday_menu">#272727</color>
+    <color name="close_btn_circle">#34FFFFFF</color>
+    <color name="date_text">#E6FFFFFF</color>
+    <color name="comment_detail_trainingday">#D9D9D9</color>
+
+    <color name="btn_add_sets">#80000000</color>
+    <color name="comments_image">#80000000</color>
+</resources>
