@@ -55,7 +55,6 @@ class NotificationsFragment : Fragment() {
 
         binding.btnAdd.setOnClickListener {
             val selected = sharedViewModel.getAllSelected()
-            // TODO: Что-то делаем с выбранными упражнениями
             // Например, передаём их в следующий экран или сохраняем
         }
 
