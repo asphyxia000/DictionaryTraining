@@ -51,13 +51,14 @@
     </style>
 
     <style name="DialogSlideAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_up</item>
-        <item name="android:windowExitAnimation">@anim/slide_down</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
+
 
     <style name="ScreenDialog">
         <item name="android:windowIsFloating">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">?attr/colorOnPrimary</item>
         <item name="android:statusBarColor">@android:color/transparent</item> <!-- прозрачный статусбар -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:fitsSystemWindows">true</item>
@@ -69,6 +70,13 @@
         <item name="android:textSelectHandleLeft">@drawable/transparent_handle</item>
         <item name="android:textSelectHandleRight">@drawable/transparent_handle</item>
     </style>
+
+    <style name="ToolbarTitleBold" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:textColorPrimary</item> <!-- Цвет можно переопределить -->
+        <item name="android:textSize">18sp</item> <!-- (опционально) размер -->
+    </style>
+
 
 
 </resources>

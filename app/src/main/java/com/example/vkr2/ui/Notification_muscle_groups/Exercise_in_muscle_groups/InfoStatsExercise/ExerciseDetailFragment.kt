@@ -1,15 +1,26 @@
 package com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise
 
+import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
+import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
+import androidx.core.view.setPadding
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +34,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class ExerciseDetailFragment:Fragment() {
+class ExerciseDetailFragment: DialogFragment() {
     private var _binding:FragmentExerciseDetailBinding?=null
     private val binding get() = _binding!!
     private lateinit var viewModel: ExerciseDetailViewModel
@@ -54,72 +65,175 @@ class ExerciseDetailFragment:Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val repository = InfoStatsRepositoryImpl(requireContext().applicationContext, CoroutineScope(Dispatchers.IO))
         val factory = ExercisesDetailViewModelFactory(repository)
-        viewModel = ViewModelProvider(this,factory)[ExerciseDetailViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[ExerciseDetailViewModel::class.java]
 
-        viewModel.loadExerciseName(exerciseId)
-        viewModel.exercisesEntity.observe(viewLifecycleOwner){info->
-            info?.let {
-                (requireActivity() as AppCompatActivity).supportActionBar?.title = it.ExercisesName
+        val constraintLayout = androidx.constraintlayout.widget.ConstraintLayout(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        val backContainer = FrameLayout(requireContext()).apply {
+            id = View.generateViewId()
+            layoutParams = ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            ).apply {
+                startToStart = ConstraintSet.PARENT_ID
+                topToTop = ConstraintSet.PARENT_ID
+                bottomToBottom = ConstraintSet.PARENT_ID
+            }
+            setPadding(24, 0, 24, 0) // Увеличить паддинг контейнера
+            setOnClickListener {
+                safeClose()
             }
         }
 
-        (requireActivity()as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        requireActivity().addMenuProvider(object :MenuProvider{
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        val backButton = AppCompatTextView(requireContext()).apply {
+            id = View.generateViewId()
+            text = "Назад"
+            textSize = 14f
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_500))
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_VERTICAL
+            )
+        }
 
+
+        // Заголовок по центру Toolbar
+        val titleTextView = AppCompatTextView(requireContext()).apply {
+            id = View.generateViewId()
+            textSize = 22f
+            setTextColor(ContextCompat.getColor(requireContext(),R.color.textforexp1))
+            layoutParams = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                startToStart = ConstraintSet.PARENT_ID
+                endToEnd = ConstraintSet.PARENT_ID
+                topToTop = ConstraintSet.PARENT_ID
+                bottomToBottom = ConstraintSet.PARENT_ID
             }
+            maxLines = 1
+            gravity = Gravity.CENTER
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId){
-                    android.R.id.home->{
-                        findNavController().popBackStack()
-                        true
-                    }
-                    else -> false
-                }
+        backContainer.addView(backButton)
+        constraintLayout.addView(backContainer)
+        constraintLayout.addView(titleTextView)
+
+        // Применяем ConstraintSet для правильного позиционирования
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraintLayout)
+
+        // Обеспечиваем, чтобы заголовок был по центру, а кнопка "Назад" не мешала
+        constraintSet.constrainWidth(titleTextView.id, ConstraintSet.WRAP_CONTENT)
+        constraintSet.constrainHeight(titleTextView.id, ConstraintSet.WRAP_CONTENT)
+        constraintSet.centerHorizontally(titleTextView.id, ConstraintSet.PARENT_ID)
+        constraintSet.centerVertically(titleTextView.id, ConstraintSet.PARENT_ID)
+
+        // Кнопка "Назад" остается слева
+        constraintSet.connect(backButton.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        constraintSet.connect(backButton.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+        constraintSet.connect(backButton.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+
+        // Применяем настройки
+        constraintSet.applyTo(constraintLayout)
+
+        binding.exerciseToolbar.apply {
+            navigationIcon = null
+            addView(constraintLayout)
+            setContentInsetsAbsolute(0, 0)
+            setContentInsetsRelative(0, 0)
+        }
+
+        viewModel.loadExerciseName(exerciseId)
+        viewModel.exercisesEntity.observe(viewLifecycleOwner) { info ->
+            info?.let {
+                titleTextView.text = it.ExercisesName
             }
-        },viewLifecycleOwner, Lifecycle.State.RESUMED)
+        }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true){
+        // Остальной код без изменений
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().popBackStack()
+                safeClose()
             }
         })
 
-        val adapter = ExerciseDetailPagerAdapter(this,exerciseId)
+        val adapter = ExerciseDetailPagerAdapter(this, exerciseId)
         binding.viewPager.adapter = adapter
-        val tabTitles= listOf("Информация","Статистика")
+
+        val tabTitles = listOf("Информация", "Статистика")
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText(tabTitles[0]))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText(tabTitles[1]))
 
-        binding.tabLayout.addOnTabSelectedListener(object:
-        TabLayout.OnTabSelectedListener{
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                binding.viewPager.currentItem = tab?.position?:0
+                binding.viewPager.currentItem = tab?.position ?: 0
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-
-            }
-
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-        binding.viewPager.registerOnPageChangeCallback(object:
-        ViewPager2.OnPageChangeCallback(){
+
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 binding.tabLayout.selectTab(binding.tabLayout.getTabAt(position))
             }
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundDrawableResource(android.R.color.black)
+            setGravity(Gravity.BOTTOM)
+
+            // Убираем отступ сверху
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                setDecorFitsSystemWindows(false)
+            } else {
+                @Suppress("DEPRECATION")
+                decorView.systemUiVisibility = (
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        )
+            }
+        }
+
+        // --- Скрываем системный Toolbar, только здесь! ---
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    private fun safeClose (){
+        if (dialog != null && dialog?.isShowing == true){
+            dismiss()
+        }
+        else{
+            if (findNavController().currentBackStackEntry != null){
+                findNavController().popBackStack()
+            }else{
+                dismiss()
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        // --- ВОЗВРАЩАЕМ Toolbar обратно ---
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
+
 }

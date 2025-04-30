@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.databinding.ItemsSetsBinding
 import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
+import com.example.vkr2.DataBase.Exercises.ExercisesEntity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 

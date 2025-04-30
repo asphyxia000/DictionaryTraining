@@ -10,14 +10,18 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentTrainingsDetailBinding
 import com.example.vkr2.repository.TrainingRepositoryImpl
+import com.example.vkr2.ui.Notification_muscle_groups.NotificationsDialogFragment
+import com.example.vkr2.ui.Notification_muscle_groups.NotificationsFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.sql.Date
@@ -107,7 +111,7 @@ class TrainingsDetailFragment : DialogFragment() {
         }
 
         binding.closeBottomSheet.setOnClickListener {
-            dismissWithAnim()
+            dismiss()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
@@ -116,11 +120,24 @@ class TrainingsDetailFragment : DialogFragment() {
                     if (isEdit) {
                         hideKeyboard()
                         clearEditFocus()
-                    } else {
-                        dismissWithAnim()                    }
+                    }
+                    else{
+                        dismiss()
+                    }
                 }
             }
         )
+
+        binding.buttonaddMini.setOnClickListener{
+            val dialog = NotificationsDialogFragment.newInstance(trainingId)
+            dialog.show(parentFragmentManager, "NotificationsDialog")
+
+//            val bundle = Bundle().apply {
+//                putBoolean("isAddExercise",true)
+//                putInt("trainingId",trainingId)
+//            }
+//            findNavController().navigate(R.id.navigation_notifications,bundle)
+        }
 
     }
 
@@ -132,7 +149,7 @@ class TrainingsDetailFragment : DialogFragment() {
                         hideKeyboard()
                         clearEditFocus()
                     }else{
-                        dismissWithAnim()
+                        dismiss()
                     }
                     true
                 }else{
@@ -159,11 +176,13 @@ class TrainingsDetailFragment : DialogFragment() {
         }
 
         val existingSets = selectedEx?.sets?.toMutableList() ?: mutableListOf()
+        val exerciseImagePath = selectedEx?.exercise?.imagePath ?: ""
 
         SetsEditDialogFragment(
             trainingId = trainingId,
             exerciseId = exerciseId,
             exerciseName = exerciseName,
+            exerciseImagePath = exerciseImagePath, // 👈 добавили сюда!
             sets = existingSets,
             onAddSet = { viewModel.addSet(it) },
             onUpdateSet = { viewModel.updateSet(it) },
@@ -202,28 +221,26 @@ class TrainingsDetailFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
-            val height = dpToPx(810) // высота в пикселях
-            setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                height
-            )
-            setBackgroundDrawableResource(android.R.color.transparent)
-
+            val height = dpToPx(810)
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, height)
             setGravity(Gravity.BOTTOM)
+            setBackgroundDrawableResource(android.R.color.transparent)
+            setWindowAnimations(R.style.DialogSlideAnimation) // 👈 ВАЖНО!
         }
     }
 
 
-    private fun dismissWithAnim(){
-        val contentView = dialog?.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
-        contentView?.animate()
-            ?.translationY(contentView.height.toFloat())
-            ?.setDuration(300)
-            ?.withEndAction{
-                dismissAllowingStateLoss()
-            }
-            ?.start()
-    }
+
+//    private fun dismissWithAnim(){
+//        val contentView = dialog?.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+//        contentView?.animate()
+//            ?.translationY(contentView.height.toFloat())
+//            ?.setDuration(300)
+//            ?.withEndAction{
+//                dismissAllowingStateLoss()
+//            }
+//            ?.start()
+//    }
 
 
     override fun onDestroyView() {

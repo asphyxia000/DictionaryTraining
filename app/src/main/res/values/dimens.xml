@@ -7,4 +7,8 @@
     <dimen name="btn_overlap">24dp</dimen>
     <dimen name="training_footer_spacing">120dp</dimen>
     <dimen name="dialog_width">380dp</dimen>
+    <dimen name="toolbar_horizontal_padding">16dp</dimen>
+    <dimen name="toolbar_item_spacing">8dp</dimen>
+    <dimen name="toolbar_back_padding">16dp</dimen>
+    <dimen name="title_margin_start">10dp</dimen>
 </resources>

@@ -28,6 +28,12 @@
         android:layout_marginBottom="10dp"
         app:cardCornerRadius="16dp">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,7 +92,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="8dp" />
+
         </LinearLayout>
+            <FrameLayout
+                android:id="@+id/exercisePicturesContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/exercisePictures"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    style="@style/Style.App.CircleImageView"
+                    android:scaleType="centerCrop"
+                    android:layout_margin="8dp"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic"
+                    android:contentDescription="Новая кнопка" />
+            </FrameLayout>
+
+        </FrameLayout>
+
     </androidx.cardview.widget.CardView>
 
     <!-- Кнопки управления — прижаты к низу -->

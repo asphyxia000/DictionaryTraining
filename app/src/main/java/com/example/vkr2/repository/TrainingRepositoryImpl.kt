@@ -1,6 +1,7 @@
 package com.example.vkr2.repository
 
 import android.content.Context
+import com.example.vkr2.DataBase.Exercises.ExercisesEntity
 import com.example.vkr2.DataBase.FitnessDatabase
 import com.example.vkr2.DataBase.Relations.TrainingWithExercises
 import com.example.vkr2.DataBase.Trainings.SetEntity
@@ -69,5 +70,10 @@ class TrainingRepositoryImpl(
     override fun getTrainingWithExercises(trainingId: Int): Flow<TrainingWithExercises> {
         return trainingDAO.getTrainingWithExercises(trainingId)
     }
-
+    override suspend fun addExercisesToTraining(trainingId: Int, exercises: List<ExercisesEntity>) {
+        val crossRefs = exercises.map { exercise ->
+            TrainingExerciseCrossRef(trainingId, exercise.ExercisesId)
+        }
+        trainingDAO.insertTrainingExercises(crossRefs)
+    }
 }

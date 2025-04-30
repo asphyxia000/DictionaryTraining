@@ -7,15 +7,26 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.R
 import com.example.vkr2.databinding.DialogAddSetBinding
+import com.example.vkr2.repository.InfoStatsRepository
+import com.example.vkr2.repository.InfoStatsRepositoryImpl
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExerciseDetailFragment
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExerciseDetailViewModel
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExercisesDetailViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class SetsEditDialogFragment(
     private val trainingId:Int,
     private val exerciseId: Int,
     private val exerciseName: String,
+    private val exerciseImagePath: String,
     private val sets: MutableList<SetEntity>,
     private val onAddSet: (SetEntity) -> Unit,
     private val onUpdateSet: (SetEntity) -> Unit,
@@ -39,6 +50,19 @@ class SetsEditDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         binding.exerciseTitle.text = exerciseName
+
+        val context = requireContext()
+        val resId = context.resources.getIdentifier(
+            exerciseImagePath.substringBeforeLast('.'),"drawable", context.packageName
+        )
+        if (resId !=0){
+            Glide.with(context)
+                .load(resId)
+                .into(binding.exercisePictures)
+        }
+        else{
+            binding.exercisePictures.setImageResource(R.drawable.biceps)
+        }
 
         if (sets.isEmpty()) {
             val validTrainingId = sets.firstOrNull()?.trainingId ?: trainingId
@@ -81,6 +105,8 @@ class SetsEditDialogFragment(
         binding.setsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.setsRecyclerView.adapter = adapter
 
+
+
         binding.buttonAddSet.setOnClickListener {
             val newSet = SetEntity(
                 trainingId = sets.first().trainingId, // безопаснее использовать уже существующий
@@ -111,6 +137,10 @@ class SetsEditDialogFragment(
             dismiss()
         }
 
+        binding.exercisePicturesContainer.setOnClickListener {
+            val exerciseDetailDialog = ExerciseDetailFragment.newInstance(exerciseId)
+            exerciseDetailDialog.show(parentFragmentManager, "ExerciseDetailDialog")
+        }
         setupBlur()
     }
 

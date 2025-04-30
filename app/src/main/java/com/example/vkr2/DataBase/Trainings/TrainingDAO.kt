@@ -3,6 +3,7 @@ package com.example.vkr2.DataBase.Trainings
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -47,5 +48,10 @@ interface TrainingDAO {
     @Transaction
     @Query("SELECT * FROM Sets WHERE exerciseId = :exerciseId")
     fun getSetsForExercises(exerciseId: Int): Flow<List<SetEntity>>
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTrainingExercises(trainingExerciseCrossRefs: List<TrainingExerciseCrossRef>)
+
 
 }

@@ -24,8 +24,22 @@ class NotificationsFragment : Fragment() {
 
     private val sharedViewModel: SharedSelection by activityViewModels()
 
+    private var isAddExercise:Boolean = false
+    private var trainingIdToAdd:Int = -1
+
     private val viewModel: NotificationsViewModel by viewModels {
         NotificationListViewModelFactory(requireContext())
+    }
+
+    companion object{
+        fun newInstanceForAddingExercises (trainingId:Int):NotificationsFragment{
+            val fragment = NotificationsFragment()
+            fragment.arguments = Bundle().apply {
+                putBoolean("isAddExercise",true)
+                putInt("trainingId",trainingId)
+            }
+            return fragment
+        }
     }
 
     override fun onCreateView(
@@ -39,6 +53,9 @@ class NotificationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val isAddExercise = arguments?.getBoolean("isAddExercise",false)?:false
+        val trainingId = arguments?.getInt("trainingId", -1)?: -1
 
         val selectedCount=sharedViewModel.getSelectedCount()
         if (selectedCount>0){
@@ -67,7 +84,9 @@ class NotificationsFragment : Fragment() {
         adapter = NoExpAdapter(emptyList()) { muscleGroup ->
             val bundle = bundleOf(
                 "selectedGroupName" to muscleGroup.NameMuscleGroups,
-                "selectedGroupID" to muscleGroup.MuscleGroupsID
+                "selectedGroupID" to muscleGroup.MuscleGroupsID,
+                "isAddExercise" to isAddExercise,
+                "trainingId" to trainingIdToAdd
             )
             findNavController().navigate(R.id.exercisesListFragment, bundle)
         }
@@ -111,8 +130,18 @@ class NotificationsFragment : Fragment() {
         binding.buttonGroup.visibility=View.GONE
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            isAddExercise = it.getBoolean("isAddExercise",false)
+            trainingIdToAdd = it.getInt("trainingId",-1)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

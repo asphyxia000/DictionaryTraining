@@ -23,5 +23,5 @@ interface TrainingRepository {
     fun getTrainingsByDate(date: LocalDate): Flow<List<TrainingWithExercises>>
     fun getSetsForExercise(trainingId: Int, exerciseId: Int): Flow<List<SetEntity>>
     fun getTrainingWithExercises(trainingId: Int): Flow<TrainingWithExercises>
-
+    suspend fun addExercisesToTraining(trainingId: Int, exercises: List<ExercisesEntity>)
 }

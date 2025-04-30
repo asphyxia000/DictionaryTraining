@@ -82,4 +82,10 @@ class ExerciseListViewModel(
             trainingRepository.addExerciseToTraining(trainingId.toInt(), exercise.ExercisesId)
         }
     }
+
+    fun addExercisesToExistingTraining(trainingId:Int, exercises: List<ExercisesEntity>){
+        viewModelScope.launch {
+            trainingRepository.addExercisesToTraining(trainingId,exercises)
+        }
+    }
 }

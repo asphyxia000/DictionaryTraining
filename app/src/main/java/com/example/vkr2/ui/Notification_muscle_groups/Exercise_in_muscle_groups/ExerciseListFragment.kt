@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -77,6 +78,10 @@ class ExerciseListFragment : Fragment() {
 
     private var _binding: FragmentExerciseListBinding? = null
     private val binding get() = _binding!!
+
+    private var isAddExercise:Boolean = false
+    private var trainingIdToAdd: Int = -1
+
     private lateinit var daysOfWeek: List<DayOfWeek>
 
     private lateinit var adapter: ExerciseAdapter
@@ -97,6 +102,8 @@ class ExerciseListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             groupName = it.getString(ARG_GROUP_NAME)
+            isAddExercise = it.getBoolean("isAddExercise",false)
+            trainingIdToAdd = it.getInt("trainingId",-1)
         }
     }
 
@@ -117,7 +124,16 @@ class ExerciseListFragment : Fragment() {
         binding.btnAdd.visibility = View.GONE
         binding.cancelBtn.translationX = 0f
 
+        // ✅ Настраиваем СВОЙ Toolbar (а не supportActionBar)
+        binding.dialogToolbar.apply {
+            title = arguments?.getString("selectedGroupName") ?: "Упражнения"
+            setNavigationIcon(R.drawable.ic_arrow_back) // 👈 Стандартная стрелка назад
+            setNavigationOnClickListener {
+                findNavController().popBackStack() // 👈 Назад при нажатии
+            }
+        }
 
+        // Скрытие клавиатуры при клике на корень
         binding.root.setOnTouchListener { v, _ ->
             if (binding.searchEditText.hasFocus()) {
                 binding.searchEditText.clearFocus()
@@ -127,7 +143,7 @@ class ExerciseListFragment : Fragment() {
             false
         }
 
-        binding.cancelBtn.setOnClickListener() {
+        binding.cancelBtn.setOnClickListener {
             val selectedCount = adapter.getSelectedExercises().size
             if (sharedViewModel.getSelectedCount() == 0) {
                 findNavController().popBackStack()
@@ -137,9 +153,11 @@ class ExerciseListFragment : Fragment() {
                 hideAddBtn()
             }
         }
+
         binding.btnAdd.setOnClickListener {
             showDialog()
         }
+
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -157,31 +175,14 @@ class ExerciseListFragment : Fragment() {
         val groupID = arguments?.getInt("selectedGroupID") ?: return
         val groupName = arguments?.getString("selectedGroupName") ?: "Упражнения"
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = groupName
         viewModel.setGroupId(groupID)
-
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {}
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    android.R.id.home -> {
-                        findNavController().navigate(R.id.navigation_notifications)
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         setupAdapter()
         setupObservers()
         setupSearch()
         loadTags(groupID)
         hideBottomNav()
-
     }
-
 
     private fun setupAdapter() {
         adapter = ExerciseAdapter(emptyList()) { exercise, isSelected,isImageClick ->
@@ -401,7 +402,7 @@ class ExerciseListFragment : Fragment() {
             .create()
 
         binding.btnSelectDate.setOnClickListener {
-//            showMaterialDatePicker(binding)
+//          showMaterialDatePicker(binding)
             showDatePicker { pickedDate ->
                 today = pickedDate
                 binding.btnSelectDate.text = pickedDate.format(formatter)
@@ -413,31 +414,51 @@ class ExerciseListFragment : Fragment() {
         }
 
         binding.btnAdd.setOnClickListener {
+
             val selectedExercises = sharedViewModel.getAllSelected()
-            val name = binding.dialogTrainingName.text?.toString()?.trim().orEmpty()
-            val comment = binding.dialogTrainingComment.text?.toString()?.trim().orEmpty()
-            val date = today
+            if (isAddExercise){
+                if (selectedExercises.isEmpty()){
+                    Toast.makeText(requireContext(),"Выберите упражнения",Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.addExercisesToExistingTraining(trainingIdToAdd,selectedExercises)
+                    sharedViewModel.clearSelection()
+                    alertDialog.dismiss()
+                    findNavController().popBackStack()
 
-            if (name.isBlank()||selectedExercises.isEmpty()||comment.isBlank()){
-                Toast.makeText(requireContext(),"Введите название и комментарий",Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                    parentFragment?.parentFragmentManager?.findFragmentByTag("NotificationsDialog")?.let { dialogFragment->
+                        if (dialogFragment is DialogFragment){
+                            dialogFragment.dismiss()
+                        }
+                    }
+                }
+            }else{
+                val name = binding.dialogTrainingName.text?.toString()?.trim().orEmpty()
+                val comment = binding.dialogTrainingComment.text?.toString()?.trim().orEmpty()
+                val date = today
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.createTraining(date,name,comment,selectedExercises)
-                sharedViewModel.clearSelection()
-                alertDialog.dismiss()
-                findNavController().navigate(
-                    R.id.navigation_home,
-                    null,
-                    NavOptions.Builder()
-                        .setPopUpTo(R.id.navigation_home, inclusive = false)
-                        .setLaunchSingleTop(true)
-                        .build()
-                )
+                if (name.isBlank()||selectedExercises.isEmpty()||comment.isBlank()){
+                    Toast.makeText(requireContext(),"Введите название и комментарий",Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.createTraining(date,name,comment,selectedExercises)
+                    sharedViewModel.clearSelection()
+                    alertDialog.dismiss()
+                    findNavController().navigate(
+                        R.id.navigation_home,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(R.id.navigation_home, inclusive = false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                }
             }
+            alertDialog.show()
         }
-        alertDialog.show()
     }
 
     private fun showDatePicker(onDateSelected: (LocalDate) -> Unit) {

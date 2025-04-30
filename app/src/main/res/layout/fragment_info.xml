@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.InfoFragment">
 
     <LinearLayout
@@ -10,16 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/imageViewGif"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="fitCenter"
-            android:paddingTop="16dp"
-            android:background="@color/white"
-            android:backgroundTint="@color/white"
-            android:contentDescription="Exercise gif" />
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            >
+            <ImageView
+                android:id="@+id/imageViewGif"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:scaleType="fitCenter"
+                android:paddingTop="16dp"
+                android:background="@color/white"
+                android:backgroundTint="@color/white"
+                android:contentDescription="Exercise gif" />
 
+        </androidx.cardview.widget.CardView>
         <TextView
             android:id="@+id/textDescription"
             android:layout_width="match_parent"
