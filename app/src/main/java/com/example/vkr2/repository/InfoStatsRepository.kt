@@ -21,4 +21,6 @@ interface InfoStatsRepository {
 
     suspend fun getExerciseById(id: Int): ExercisesEntity?
 
+    suspend fun recalculate(exerciseId: Int)
+
 }

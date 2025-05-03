@@ -67,6 +67,11 @@ class TrainingRepositoryImpl(
         return trainingDAO.getSetsforExercise(trainingId,exerciseId)
     }
 
+    override fun getSetsForExercises(exerciseId: Int): Flow<List<SetEntity>> {
+        return trainingDAO.getSetsForExercises(exerciseId)
+    }
+
+
     override fun getTrainingWithExercises(trainingId: Int): Flow<TrainingWithExercises> {
         return trainingDAO.getTrainingWithExercises(trainingId)
     }

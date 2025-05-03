@@ -65,21 +65,17 @@ class SetsEditDialogFragment(
         }
 
         if (sets.isEmpty()) {
-            val validTrainingId = sets.firstOrNull()?.trainingId ?: trainingId
-            if (validTrainingId != null) {
-                val dummy = SetEntity(
-                    trainingId = validTrainingId,
-                    exerciseId = exerciseId,
-                    reps = 0,
-                    weight = 0,
-                    duration = null,
-                    exerciseOrder = 0
-                )
-                sets.add(dummy)
-                onAddSet(dummy) // добавляем в БД
-            }
+            val dummy = SetEntity(
+                trainingId = trainingId,
+                exerciseId = exerciseId,
+                reps = 0,
+                weight = 0,
+                duration = null,
+                exerciseOrder = 0
+            )
+            sets.add(dummy)
+            onAddSet(dummy)
         }
-
         adapter = SetsAdapter(
             sets = sets,
             onUpdateSet = { updatedSet -> onUpdateSet(updatedSet) },

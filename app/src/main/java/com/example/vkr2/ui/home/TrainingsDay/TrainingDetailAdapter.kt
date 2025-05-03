@@ -1,5 +1,6 @@
 package com.example.vkr2.ui.home.TrainingsDay
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentTrainingsDetailBinding
 
 class TrainingDetailAdapter(
+    private val trainingId:Int,
     private val onExercisesClick:(ExercisesEntity)->Unit
 ): RecyclerView.Adapter<TrainingDetailAdapter.ExViewHolder>() {
 
@@ -35,7 +37,11 @@ class TrainingDetailAdapter(
             onExercisesClick(item.exercise)
         }
         holder.name.text = item.exercise.ExercisesName
-        val setsText = item.sets.joinToString(separator = ", ") { "${it.weight} кг × ${it.reps}" }
+        val filteredSets = item.sets.filter { it.trainingId == trainingId }
+        if (item.sets.any { it.trainingId != trainingId }) {
+            Log.w("AdapterWarning", "Найдены подходы от других тренировок для упражнения ${item.exercise.ExercisesName}")
+        }
+        val setsText = filteredSets.joinToString(separator = ", ") { "${it.weight} кг × ${it.reps}" }
         holder.sets.text = if (setsText.isNotBlank()) setsText else "0 кг × 0"
     }
 

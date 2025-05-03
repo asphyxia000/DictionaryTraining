@@ -8,17 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.vkr2.DataBase.Relations.TrainingWithExercises
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.DataBase.Trainings.TrainingsEntity
+import com.example.vkr2.repository.InfoStatsRepository
 import com.example.vkr2.repository.TrainingRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class TrainindDetailViewModel(
-    private val repository: TrainingRepository
+    private val trainingRepository: TrainingRepository,
+    private val infoStatsRepository: InfoStatsRepository
 ):ViewModel() {
     private val _training = MutableLiveData<TrainingWithExercises>()
     val training: LiveData<TrainingWithExercises> =_training
 
     fun loadTraining(trainingId:Int){
-        viewModelScope.launch { repository.getTrainingWithExercises(trainingId).collect{trainingId->
+        viewModelScope.launch { trainingRepository.getTrainingWithExercises(trainingId).collect{trainingId->
             _training.postValue(trainingId)
         } }
     }
@@ -34,7 +37,7 @@ class TrainindDetailViewModel(
                     comment = newComment
                 )
                 Log.d("TrainindDetailVM", "Обновление: id=${update.trainingId}, name=$newName")
-                repository.updateTraining(update)
+                trainingRepository.updateTraining(update)
             } else {
                 Log.w("TrainindDetailVM", "Не удалось сохранить: тренировка не загружена")
             }
@@ -43,17 +46,30 @@ class TrainindDetailViewModel(
 
     fun addSet(set: SetEntity){
         viewModelScope.launch {
-            repository.addSet(set)
+            trainingRepository.addSet(set)
+            refreshStats(set.exerciseId)
         }
     }
     fun updateSet(set: SetEntity) {
         viewModelScope.launch {
-            repository.updateSet(set)
+            trainingRepository.updateSet(set)
+            refreshStats(set.exerciseId)
         }
     }
     fun deleteSet(set: SetEntity){
         viewModelScope.launch {
-            repository.deleteSet(set)
+            trainingRepository.deleteSet(set)
+            refreshStats(set.exerciseId)
+        }
+    }
+
+    suspend fun getSetsForExercise(trainingId: Int,exerciseId: Int):List<SetEntity>{
+        return trainingRepository.getSetsForExercise(trainingId,exerciseId).first()
+    }
+
+    private fun refreshStats(exerciseId: Int){
+        viewModelScope.launch {
+            infoStatsRepository.recalculate(exerciseId)
         }
     }
 

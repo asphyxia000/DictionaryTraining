@@ -401,6 +401,8 @@ class ExerciseListFragment : Fragment() {
             .setView(binding.root)
             .create()
 
+        alertDialog.show()
+
         binding.btnSelectDate.setOnClickListener {
 //          showMaterialDatePicker(binding)
             showDatePicker { pickedDate ->

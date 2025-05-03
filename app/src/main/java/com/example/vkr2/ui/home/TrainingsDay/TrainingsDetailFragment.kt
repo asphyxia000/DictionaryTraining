@@ -15,15 +15,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentTrainingsDetailBinding
+import com.example.vkr2.repository.InfoStatsRepositoryImpl
 import com.example.vkr2.repository.TrainingRepositoryImpl
 import com.example.vkr2.ui.Notification_muscle_groups.NotificationsDialogFragment
 import com.example.vkr2.ui.Notification_muscle_groups.NotificationsFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.sql.Date
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -41,14 +44,14 @@ class TrainingsDetailFragment : DialogFragment() {
     private var originalTitle: String = ""
     private var originalComment: String = ""
 
+    private lateinit var adapter: TrainingDetailAdapter
+
+
     private val viewModel: TrainindDetailViewModel by viewModels {
         TrainindDetailViewModelFactory(
-            TrainingRepositoryImpl(requireContext(), CoroutineScope(Dispatchers.IO))
+            TrainingRepositoryImpl(requireContext(), CoroutineScope(Dispatchers.IO)),
+            InfoStatsRepositoryImpl(requireContext(), CoroutineScope(Dispatchers.IO))
         )
-    }
-
-    private val adapter = TrainingDetailAdapter { exercise ->
-        showDialog(exercise.ExercisesId, exercise.ExercisesName)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,22 +68,24 @@ class TrainingsDetailFragment : DialogFragment() {
         return binding.root
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         trainingId = arguments?.getInt("trainingId") ?: return
-        viewModel.loadTraining(trainingId)
+
+        adapter = TrainingDetailAdapter(trainingId) { exercise ->
+            showDialog(exercise.ExercisesId, exercise.ExercisesName)
+        }
 
         binding.recyclerViewExercises.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewExercises.adapter = adapter
 
+        viewModel.loadTraining(trainingId)
         viewModel.training.observe(viewLifecycleOwner) { data ->
             originalTitle = data.training.name.replaceFirstChar { it.uppercase() }
-
             originalComment = data.training.comment.replaceFirstChar { it.uppercase() }
 
             binding.trainingTitle.setText(originalTitle)
-
             binding.trainingComment.setText(originalComment)
+
             adapter.updateList(data.exercises)
 
             val createdAtFormatted = formatDateTime(data.training.createdAt)
@@ -89,13 +94,12 @@ class TrainingsDetailFragment : DialogFragment() {
             setupEditWatchers()
         }
 
-        binding.trainingTitle.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) showCheckButton()
-        }
+        setupListeners()
+    }
 
-        binding.trainingComment.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) showCheckButton()
-        }
+    private fun setupListeners() {
+        binding.trainingTitle.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) showCheckButton() }
+        binding.trainingComment.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) showCheckButton() }
 
         binding.root.setOnTouchListener { _, _ ->
             saveIfChanged()
@@ -110,9 +114,7 @@ class TrainingsDetailFragment : DialogFragment() {
             clearEditFocus()
         }
 
-        binding.closeBottomSheet.setOnClickListener {
-            dismiss()
-        }
+        binding.closeBottomSheet.setOnClickListener { dismiss() }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -120,25 +122,16 @@ class TrainingsDetailFragment : DialogFragment() {
                     if (isEdit) {
                         hideKeyboard()
                         clearEditFocus()
-                    }
-                    else{
+                    } else {
                         dismiss()
                     }
                 }
-            }
-        )
+            })
 
-        binding.buttonaddMini.setOnClickListener{
+        binding.buttonaddMini.setOnClickListener {
             val dialog = NotificationsDialogFragment.newInstance(trainingId)
             dialog.show(parentFragmentManager, "NotificationsDialog")
-
-//            val bundle = Bundle().apply {
-//                putBoolean("isAddExercise",true)
-//                putInt("trainingId",trainingId)
-//            }
-//            findNavController().navigate(R.id.navigation_notifications,bundle)
         }
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -171,23 +164,29 @@ class TrainingsDetailFragment : DialogFragment() {
     }
 
     private fun showDialog(exerciseId: Int, exerciseName: String) {
-        val selectedEx = viewModel.training.value?.exercises?.find {
-            it.exercise.ExercisesId == exerciseId
+//        val selectedEx = viewModel.training.value?.exercises?.find {
+//            it.exercise.ExercisesId == exerciseId
+//        }
+        lifecycleScope.launch {
+            val currentSets = viewModel.getSetsForExercise(trainingId, exerciseId)
+            val sets = currentSets.toMutableList()
+
+            // Получаем путь к картинке из текущей тренировки
+            val exerciseImagePath = viewModel.training.value?.exercises
+                ?.find { it.exercise.ExercisesId == exerciseId }
+                ?.exercise?.imagePath ?: ""
+
+            SetsEditDialogFragment(
+                trainingId = trainingId,
+                exerciseId = exerciseId,
+                exerciseName = exerciseName,
+                exerciseImagePath = exerciseImagePath,
+                sets = sets,
+                onAddSet = { viewModel.addSet(it) },
+                onUpdateSet = { viewModel.updateSet(it) },
+                onDeleteSet = { viewModel.deleteSet(it) }
+            ).show(childFragmentManager, "SetsEditDialog")
         }
-
-        val existingSets = selectedEx?.sets?.toMutableList() ?: mutableListOf()
-        val exerciseImagePath = selectedEx?.exercise?.imagePath ?: ""
-
-        SetsEditDialogFragment(
-            trainingId = trainingId,
-            exerciseId = exerciseId,
-            exerciseName = exerciseName,
-            exerciseImagePath = exerciseImagePath, // 👈 добавили сюда!
-            sets = existingSets,
-            onAddSet = { viewModel.addSet(it) },
-            onUpdateSet = { viewModel.updateSet(it) },
-            onDeleteSet = { viewModel.deleteSet(it) }
-        ).show(childFragmentManager, "SetsEditDialog")
     }
 
     private fun setupEditWatchers() {
