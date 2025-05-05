@@ -12,6 +12,57 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/groupbtnperiod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="12dp"
+            android:weightSum="3">
+
+            <ImageButton
+                android:id="@+id/btnbackperiod"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/arrow_back_ios"
+                android:contentDescription="Назад" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/periodInputLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                app:endIconMode="dropdown_menu"
+                android:layout_marginHorizontal="8dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/spinperiod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:dropDownHeight="wrap_content"
+                    android:dropDownVerticalOffset="8dp"
+                    android:importantForAccessibility="no"
+                    android:inputType="none"
+                    android:padding="12dp"
+                    android:textColorHint="?attr/colorOnSurfaceVariant"
+                    android:popupBackground="@drawable/dropdown_item_background" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <ImageButton
+                android:id="@+id/btnnextperiod"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/arrow_next_ios"
+                android:contentDescription="Вперёд"/>
+
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/statsGroupParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -24,8 +24,15 @@ class ExerciseDetailViewModel(
     private val _exerciseImagePath = MutableLiveData<String?>()
     val exerciseImagePath: MutableLiveData<String?> get() = _exerciseImagePath
 
+    private val _selectedPeriod = MutableLiveData<PeriodSelection?>(PeriodSelection.last30day)
+    val selectedPeriod: LiveData<PeriodSelection?>get()=_selectedPeriod
+
     private val _exerciseEntity = MutableLiveData<ExercisesEntity?>()
     val exercisesEntity: LiveData<ExercisesEntity?> get ()=_exerciseEntity
+
+    fun setPeriod(period:PeriodSelection){
+        _selectedPeriod.value=period
+    }
 
     fun loadExerciseInfo(exerciseId:Int){
         viewModelScope.launch {
@@ -37,15 +44,10 @@ class ExerciseDetailViewModel(
         }
     }
 
-    fun loadExercisesStats(exerciseId: Int){
+    fun loadExercisesStats(exerciseId: Int, periodSelection: PeriodSelection) {
         viewModelScope.launch {
-            val stats = repository.getStats(exerciseId)
-           if (stats != null){
-               _exerciseStats.value = stats
-           }else{
-               repository.recalculate(exerciseId)
-               _exerciseStats.value = repository.getStats(exerciseId)
-           }
+            val stats = repository.calculateStatsForPeriod(exerciseId, periodSelection)
+            _exerciseStats.value = stats
         }
     }
 

@@ -5,6 +5,7 @@ import com.example.vkr2.DataBase.Exercises.DetailExercise.ExerciseStats
 import com.example.vkr2.DataBase.Exercises.ExercisesEntity
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.DataBase.Trainings.TrainingsEntity
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.PeriodSelection
 import kotlinx.coroutines.flow.Flow
 
 interface InfoStatsRepository {
@@ -22,5 +23,7 @@ interface InfoStatsRepository {
     suspend fun getExerciseById(id: Int): ExercisesEntity?
 
     suspend fun recalculate(exerciseId: Int)
+    suspend fun calculateStatsForPeriod(exerciseId: Int, periodSelection: PeriodSelection):ExerciseStats?
+    suspend fun getAllTrainings():Flow<List<TrainingsEntity>>
 
 }
