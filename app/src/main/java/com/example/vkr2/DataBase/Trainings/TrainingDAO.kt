@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.vkr2.DataBase.Exercises.DetailExercise.ExerciseStats
 import com.example.vkr2.DataBase.Relations.TrainingWithExercises
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -24,6 +25,8 @@ interface TrainingDAO {
     @Insert suspend fun insertSet(set: SetEntity)
     @Delete suspend fun deleteSet(set: SetEntity)
     @Update suspend fun updateSet(set: SetEntity)
+    @Query("SELECT * FROM Sets")
+    suspend fun getAllSets(): List<SetEntity>
 
     @Transaction
     @Query("Select * from Trainings where date = :date")

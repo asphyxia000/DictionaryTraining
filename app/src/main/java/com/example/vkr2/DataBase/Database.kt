@@ -12,9 +12,15 @@ import com.example.vkr2.DataBase.Exercises.DetailExercise.ExerciseStats
 import com.example.vkr2.DataBase.Exercises.DetailExercise.InfoStatsDAO
 import com.example.vkr2.DataBase.Exercises.ExercisesDAO
 import com.example.vkr2.DataBase.Exercises.ExercisesEntity
+import com.example.vkr2.DataBase.Measurements.BodyMeasurementsEntity
+import com.example.vkr2.DataBase.MeasurementsAndStats.GeneralTrainingStats.GeneralTrainingStatsDAO
+import com.example.vkr2.DataBase.MeasurementsAndStats.GeneralTrainingStats.GeneralTrainingStatsEntity
+import com.example.vkr2.DataBase.MeasurementsAndStats.Measurements.BodyMeasurementsDAO
 import com.example.vkr2.DataBase.Migrations.MIGRATION_10_11
 import com.example.vkr2.DataBase.Migrations.MIGRATION_11_12
 import com.example.vkr2.DataBase.Migrations.MIGRATION_12_13
+import com.example.vkr2.DataBase.Migrations.MIGRATION_13_14
+import com.example.vkr2.DataBase.Migrations.MIGRATION_14_15
 import com.example.vkr2.DataBase.Migrations.MIGRATION_1_2
 import com.example.vkr2.DataBase.Migrations.MIGRATION_2_3
 import com.example.vkr2.DataBase.Migrations.MIGRATION_3_4
@@ -41,9 +47,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-const val DATABASE_VERSION_CODE=13
+const val DATABASE_VERSION_CODE=15
 
-@Database(entities = [MuscleGroupEntity::class, ExercisesEntity::class,TagsExercisesEntity::class,TagsEntity::class,TrainingsEntity::class,SetEntity::class,TrainingExerciseCrossRef::class,ExerciseStats::class,ExerciseInfo::class], version = DATABASE_VERSION_CODE, exportSchema = true)
+@Database(entities = [MuscleGroupEntity::class, ExercisesEntity::class,TagsExercisesEntity::class,TagsEntity::class,TrainingsEntity::class,SetEntity::class,
+    TrainingExerciseCrossRef::class,ExerciseStats::class,ExerciseInfo::class,GeneralTrainingStatsEntity::class,BodyMeasurementsEntity::class], version = DATABASE_VERSION_CODE, exportSchema = true)
 @TypeConverters(Converter::class)
 abstract class FitnessDatabase : RoomDatabase(){
     abstract fun MGroupDAO(): MuscleGroupDAO
@@ -52,6 +59,8 @@ abstract class FitnessDatabase : RoomDatabase(){
     abstract fun TagExpDAO(): TagsExercisesDAO
     abstract fun TrainingDAO():TrainingDAO
     abstract fun InfoStatsDAO():InfoStatsDAO
+    abstract fun GeneralStatsDAO():GeneralTrainingStatsDAO
+    abstract fun BodyMeasurementsDAO(): BodyMeasurementsDAO
 
     companion object{
         @Volatile
@@ -68,7 +77,8 @@ abstract class FitnessDatabase : RoomDatabase(){
                     )
                         .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                             MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
-                            MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13)
+                            MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13,
+                            MIGRATION_13_14, MIGRATION_14_15)
                         .addCallback(RoomDatabaseCallback(scope))
                         .build()
                 }
@@ -81,8 +91,8 @@ abstract class FitnessDatabase : RoomDatabase(){
                 super.onCreate(db)
                 INSTANCE?.let { database ->
                     scope.launch{
-
-                        populateDatabase(database.MGroupDAO(), database.ExpDAO(),database.TagExpDAO(),database.TagDAO(),database.TrainingDAO(),database.InfoStatsDAO())
+                        populateDatabase(database.MGroupDAO(), database.ExpDAO(),database.TagExpDAO(),
+                            database.TagDAO(),database.TrainingDAO(),database.InfoStatsDAO())
                     }
                 }
             }

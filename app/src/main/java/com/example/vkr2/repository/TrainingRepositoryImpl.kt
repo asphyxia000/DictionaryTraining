@@ -71,6 +71,10 @@ class TrainingRepositoryImpl(
         return trainingDAO.getSetsForExercises(exerciseId)
     }
 
+    override suspend fun getAllSets(): List<SetEntity> {
+        return trainingDAO.getAllSets()
+    }
+
 
     override fun getTrainingWithExercises(trainingId: Int): Flow<TrainingWithExercises> {
         return trainingDAO.getTrainingWithExercises(trainingId)

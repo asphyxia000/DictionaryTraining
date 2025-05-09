@@ -36,16 +36,10 @@ class StatsFragment : Fragment() {
             return fragment
         }
     }
-    private var currentPeriodIndex = 0
-    private val periodlist = listOf(
-        PeriodSelection.last30day,
-        PeriodSelection.last3month,
-        PeriodSelection.lass6month,
-        PeriodSelection.lastyear,
-        PeriodSelection.alltime,
-    )
 
-    private val spinnerItems = listOf("30 дней", "3 месяца", "6 месяцев", "1 год", "Всё время")
+    private var currentPeriodIndex = 0
+    private lateinit var fullPeriodList: List<PeriodSelection>
+    private lateinit var fullSpinnerItems: List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,48 +55,70 @@ class StatsFragment : Fragment() {
         repository = InfoStatsRepositoryImpl(requireContext().applicationContext, CoroutineScope(Dispatchers.IO))
         viewModel = ViewModelProvider(this, ExercisesDetailViewModelFactory(repository))[ExerciseDetailViewModel::class.java]
 
-//        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinnerItems)
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        binding.spinperiod.adapter = adapter
-//        binding.spinperiod.setSelection(currentPeriodIndex)
+        CoroutineScope(Dispatchers.IO).launch {
+            val allTrainings = repository.getAllTrainings().first()
+            val allSets = repository.getSetsForExercises(exerciseId).first()
+            val idwithex = allSets.map { it.trainingId }.toSet()
 
-        binding.btnbackperiod.setOnClickListener {
-            if (currentPeriodIndex > 0) {
-                currentPeriodIndex--
-                binding.spinperiod.setText(spinnerItems[currentPeriodIndex], false)
-                val period = periodlist[currentPeriodIndex]
-                viewModel.setPeriod(period)
-                reloadStats(exerciseId, period)
+            val specificMonth = allTrainings
+                .filter { it.trainingId in idwithex }
+                .map { YearMonth.of(it.date.year, it.date.monthValue) }
+                .distinct()
+                .sortedDescending()
+
+            val specificPeriodList = specificMonth.map { PeriodSelection.SpecificMonth(it.year, it.monthValue) }
+            val specificSpinnerItems = specificMonth.map {
+                it.format(DateTimeFormatter.ofPattern("LLLL yyyy", Locale("ru"))).replaceFirstChar { c -> c.uppercaseChar() }
+            }
+
+            val basePeriods = listOf(
+                PeriodSelection.last30day,
+                PeriodSelection.last3month,
+                PeriodSelection.lass6month,
+                PeriodSelection.lastyear,
+                PeriodSelection.alltime,
+            )
+            val baseItems = listOf("30 дней", "3 месяца", "6 месяцев", "1 год", "Всё время")
+
+            fullPeriodList = basePeriods + specificPeriodList
+            fullSpinnerItems = baseItems + specificSpinnerItems
+
+            withContext(Dispatchers.Main) {
+                val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, fullSpinnerItems)
+                binding.spinperiod.setAdapter(adapter)
+
+                binding.btnbackperiod.setOnClickListener {
+                    if (currentPeriodIndex > 0) {
+                        currentPeriodIndex--
+                        updateSelection(exerciseId)
+                    }
+                }
+
+                binding.btnnextperiod.setOnClickListener {
+                    if (currentPeriodIndex < fullPeriodList.size - 1) {
+                        currentPeriodIndex++
+                        updateSelection(exerciseId)
+                    }
+                }
+
+                binding.spinperiod.setOnItemClickListener { _, _, position, _ ->
+                    currentPeriodIndex = position
+                    updateSelection(exerciseId)
+                }
+
+                // начальная установка
+                currentPeriodIndex = 0
+                updateSelection(exerciseId)
             }
         }
+    }
 
-        binding.btnnextperiod.setOnClickListener {
-            if (currentPeriodIndex < periodlist.size - 1) {
-                currentPeriodIndex++
-                binding.spinperiod.setText(spinnerItems[currentPeriodIndex], false)
-                val period = periodlist[currentPeriodIndex]
-                viewModel.setPeriod(period)
-                reloadStats(exerciseId, period)
-            }
-        }
-
-
-        val items = listOf("30 дней", "3 месяца", "6 месяцев", "1 год", "Всё время")
-        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, items)
-        binding.spinperiod.setAdapter(adapter)
-
-        binding.spinperiod.setOnItemClickListener { _, _, position, _ ->
-            currentPeriodIndex = position
-            val period = periodlist.getOrElse(position) { PeriodSelection.alltime }
-            viewModel.setPeriod(period)
-            reloadStats(exerciseId, period)
-        }
-
-        binding.spinperiod.setText(items[currentPeriodIndex], false)
-        val initialPeriod = periodlist[currentPeriodIndex]
-        viewModel.setPeriod(initialPeriod)
-        reloadStats(exerciseId, initialPeriod)
-
+    private fun updateSelection(exerciseId: Int) {
+        val selectedText = fullSpinnerItems[currentPeriodIndex]
+        val selectedPeriod = fullPeriodList[currentPeriodIndex]
+        binding.spinperiod.setText(selectedText, false)
+        viewModel.setPeriod(selectedPeriod)
+        reloadStats(exerciseId, selectedPeriod)
     }
 
     private fun reloadStats(exerciseId: Int, period: PeriodSelection) {
@@ -116,22 +132,16 @@ class StatsFragment : Fragment() {
 
             val validTrainingIds = when (period) {
                 is PeriodSelection.last30day -> {
-                    val start = now.withDayOfMonth(1) // с начала месяца
+                    val start = now.withDayOfMonth(1)
                     trainings.filter { it.date >= start }
                 }
                 is PeriodSelection.last3month -> {
                     val targetMonths = (0..2).map { nowMonth.minusMonths(it.toLong()) }
-                    trainings.filter { training ->
-                        val trainingMonth = YearMonth.from(training.date)
-                        trainingMonth in targetMonths
-                    }
+                    trainings.filter { YearMonth.from(it.date) in targetMonths }
                 }
                 is PeriodSelection.lass6month -> {
                     val targetMonths = (0..5).map { nowMonth.minusMonths(it.toLong()) }
-                    trainings.filter { training ->
-                        val trainingMonth = YearMonth.from(training.date)
-                        trainingMonth in targetMonths
-                    }
+                    trainings.filter { YearMonth.from(it.date) in targetMonths }
                 }
                 is PeriodSelection.lastyear -> {
                     val oneYearAgo = now.minusYears(1)
@@ -145,7 +155,6 @@ class StatsFragment : Fragment() {
                 is PeriodSelection.alltime -> trainings
             }.map { it.trainingId }
 
-
             val filteredSets = sets.filter { it.trainingId in validTrainingIds }
             val groupedByTraining = filteredSets.groupBy { it.trainingId }
 
@@ -153,46 +162,43 @@ class StatsFragment : Fragment() {
                 val parent = binding.statsGroupParent
                 parent.removeAllViews()
 
-                // Показать карточки с подходами
                 if (filteredSets.isNotEmpty()) {
                     groupedByTraining
                         .toList()
-                        .sortedByDescending  { pair ->
-                            val training = trainings.find { it.trainingId == pair.first }
-                            training?.date
+                        .sortedByDescending { pair ->
+                            trainings.find { it.trainingId == pair.first }?.date
                         }
                         .forEach { (trainingId, sets) ->
-                        val groupView = layoutInflater.inflate(R.layout.item_stats_group, parent, false)
-                        val header = groupView.findViewById<LinearLayout>(R.id.headerContainer)
-                        val setsContainer = groupView.findViewById<LinearLayout>(R.id.setsContainer)
-                        setsContainer.visibility = View.GONE
+                            val groupView = layoutInflater.inflate(R.layout.item_stats_group, parent, false)
+                            val header = groupView.findViewById<LinearLayout>(R.id.headerContainer)
+                            val setsContainer = groupView.findViewById<LinearLayout>(R.id.setsContainer)
+                            setsContainer.visibility = View.GONE
 
-                        val training = repository.getTrainingbyId(trainingId)
-                        groupView.findViewById<TextView>(R.id.groupTitle).text = training?.name ?: "Нет названия"
-                        groupView.findViewById<TextView>(R.id.groupDate).text =
-                            training?.date?.format(DateTimeFormatter.ofPattern("dd MMM yyyy")) ?: "Без даты"
+                            val training = repository.getTrainingbyId(trainingId)
+                            groupView.findViewById<TextView>(R.id.groupTitle).text = training?.name ?: "Нет названия"
+                            groupView.findViewById<TextView>(R.id.groupDate).text =
+                                training?.date?.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale("ru"))) ?: "Без даты"
 
-                        sets.forEachIndexed { index, set ->
-                            val setView = layoutInflater.inflate(R.layout.item_set_stats, setsContainer, false)
-                            setView.findViewById<TextView>(R.id.setNumber).text = "${index + 1}."
-                            setView.findViewById<TextView>(R.id.weight).text = "${set.weight ?: 0}"
-                            setView.findViewById<TextView>(R.id.reps).text = "${set.reps ?: 0}"
-                            setsContainer.addView(setView)
+                            sets.forEachIndexed { index, set ->
+                                val setView = layoutInflater.inflate(R.layout.item_set_stats, setsContainer, false)
+                                setView.findViewById<TextView>(R.id.setNumber).text = "${index + 1}."
+                                setView.findViewById<TextView>(R.id.weight).text = "${set.weight ?: 0}"
+                                setView.findViewById<TextView>(R.id.reps).text = "${set.reps ?: 0}"
+                                setsContainer.addView(setView)
+                            }
+
+                            header.setOnClickListener {
+                                setsContainer.visibility = if (setsContainer.visibility == View.VISIBLE)
+                                    View.GONE else View.VISIBLE
+                            }
+
+                            parent.addView(groupView)
                         }
-
-                        header.setOnClickListener {
-                            setsContainer.visibility = if (setsContainer.visibility == View.VISIBLE)
-                                View.GONE else View.VISIBLE
-                        }
-
-                        parent.addView(groupView)
-                    }
                 } else {
-                    // Очищаем и показываем пустую статистику
                     binding.recyclerStats.adapter = StatsAdapter(emptyList())
                 }
 
-                // Загружаем статистику
+                // отображаем статистику
                 val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale("ru"))
                 val maxVolumeDateStr = if (stats.maxWorkoutVolumeDate != LocalDateTime.MIN)
                     stats.maxWorkoutVolumeDate.format(formatter) else null

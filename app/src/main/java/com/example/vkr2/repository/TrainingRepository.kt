@@ -18,6 +18,7 @@ interface TrainingRepository {
     suspend fun addSet(set: SetEntity)
     suspend fun updateSet(set: SetEntity)
     suspend fun deleteSet(set: SetEntity)
+    suspend fun getAllSets():List<SetEntity>
 
     fun getAllTrainings(): Flow<List<TrainingsEntity>>
     fun getTrainingsByDate(date: LocalDate): Flow<List<TrainingWithExercises>>

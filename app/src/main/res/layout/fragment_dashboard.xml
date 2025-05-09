@@ -1,22 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashboardFragment">
+    android:fillViewport="true"
+    android:paddingTop="?attr/actionBarSize">
 
-    <TextView
-        android:id="@+id/text_dashboard"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Заголовок замеров -->
+        <TextView
+            android:id="@+id/textforexp1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Замеры"
+            android:textColor="@color/textforexp1"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- CardView для view3 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"
+                android:padding="8dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Горизонтальный контейнер для заголовка и выбора периода -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginVertical="8dp"
+            android:gravity="center_vertical">
+
+            <!-- Заголовок статистики -->
+            <TextView
+                android:id="@+id/textforexp2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Статистика"
+                android:textColor="@color/textforexp1"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Выбор периода -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/periodInputLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                app:endIconMode="dropdown_menu"
+                android:layout_marginEnd="8dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/spinperiod"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:background="@null"
+                    android:dropDownHeight="wrap_content"
+                    android:dropDownVerticalOffset="8dp"
+                    android:importantForAccessibility="no"
+                    android:inputType="none"
+                    android:padding="12dp"
+                    android:textColorHint="?attr/colorOnSurfaceVariant"
+                    android:popupBackground="@drawable/dropdown_item_background" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- CardView для viewall -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="100dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/viewall"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"
+                android:padding="8dp" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

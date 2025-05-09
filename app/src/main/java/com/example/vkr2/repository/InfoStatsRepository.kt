@@ -14,7 +14,6 @@ interface InfoStatsRepository {
 
     suspend fun getStats(exerciseId: Int):ExerciseStats?
     suspend fun insertOrUpdateStats(stats: ExerciseStats)
-
     suspend fun getExerciseImage(exerciseId: Int):String?
     suspend fun getSetsForExercises(exerciseId: Int):Flow<List<SetEntity>>
 

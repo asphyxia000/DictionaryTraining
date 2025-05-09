@@ -400,7 +400,71 @@ val MIGRATION_12_13 = object : Migration(12, 13) {
         }
     }
 }
+val MIGRATION_13_14 = object : Migration(13,14){
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.run {
+            execSQL("""
+                CREATE TABLE IF NOT EXISTS GeneralTrainingStats(
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                date TEXT NOT NULL,
+                totalTrainings INTEGER NOT NULL,
+                trainingDays INTEGER NOT NULL,
+                trainingWeeks INTEGER NOT NULL,
+                totalVolume INTEGER NOT NULL,
+                totalDistance INTEGER NOT NULL,
+                totalExercises INTEGER NOT NULL,
+                totalSets INTEGER NOT NULL,
+                totalReps INTEGER NOT NULL
+                )
+            """.trimIndent())
 
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS BodyMeasurements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                date TEXT NOT NULL,
+                neck INTEGER NOT NULL,
+                shoulders INTEGER NOT NULL,
+                forearms INTEGER NOT NULL,
+                biceps INTEGER NOT NULL,
+                chest INTEGER NOT NULL,
+                waist INTEGER NOT NULL,
+                triceps INTEGER NOT NULL,
+                pelvis INTEGER NOT NULL
+                )   
+            """.trimIndent())
+        }
+    }
+
+}
+val MIGRATION_14_15 = object : Migration(14,15){
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.run {
+            db.execSQL("Drop table if exists BodyMeasurements")
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS BodyMeasurements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    date TEXT NOT NULL,
+                    neck INTEGER NOT NULL,
+                    shoulders INTEGER NOT NULL,
+                    chest INTEGER NOT NULL,
+                    waist INTEGER NOT NULL,
+                    pelvis INTEGER NOT NULL,
+                    bedroLeft INTEGER NOT NULL,
+                    ikriLeft INTEGER NOT NULL,
+                    begroRight INTEGER NOT NULL,
+                    ikriRight INTEGER NOT NULL,
+                    forearmsLeft INTEGER NOT NULL,
+                    forearmsRight INTEGER NOT NULL,
+                    bicepsLeft INTEGER NOT NULL,
+                    bicepsRight INTEGER NOT NULL,
+                    tricepsLeft INTEGER NOT NULL,
+                    tricepsRight INTEGER NOT NULL
+                )   
+            """.trimIndent())
+        }
+    }
+
+}
 
 
 
