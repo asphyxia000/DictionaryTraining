@@ -26,9 +26,8 @@ class BodyMeasurementsRepositoryImpl(
         return bodyMeasurementsDAO.getAll() // Убедитесь, что getAll() возвращает Flow
     }
 
-    override suspend fun getLatest(): BodyMeasurementsEntity? {
-        return bodyMeasurementsDAO.getLatest()
-    }
+    override fun getLatest(): Flow<BodyMeasurementsEntity?> =
+        bodyMeasurementsDAO.getLatest()
 
     override suspend fun getMeasurementsByDate(date: LocalDate): BodyMeasurementsEntity? {
         return bodyMeasurementsDAO.getByDate(date)

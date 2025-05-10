@@ -2,12 +2,14 @@ package com.example.vkr2.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.databinding.ViewholderForZamersBinding
 
 class ZamersAdapter (
-    private var items: List<DashboardItem.BodyMeasurementItem>
+    private var items: List<DashboardItem.BodyMeasurementItem>,
+    private val onItemClick: (String,Boolean)->Unit
 ):RecyclerView.Adapter<ZamersAdapter.ZamersViewHolder>(){
     inner class ZamersViewHolder(val binding: ViewholderForZamersBinding):
             RecyclerView.ViewHolder(binding.root)
@@ -19,14 +21,40 @@ class ZamersAdapter (
 
     override fun getItemCount(): Int = items.size
 
+    // ZamersAdapter.kt
     override fun onBindViewHolder(holder: ZamersViewHolder, position: Int) {
         val item = items[position]
         holder.binding.tvBodyPart.text = item.label
-        holder.binding.etLeft.setText(item.left?.toString()?:"")
-        holder.binding.etRight.setText(item.right?.toString()?:"")
-        holder.binding.etLeft.isEnabled = false
-        holder.binding.etRight.isEnabled = false
+
+        val isDoubleSided = item.label in listOf("Предплечья", "Бицепсы", "Трицепсы", "Бедра", "Икры")
+
+        // Устанавливаем текст для etLeft
+        holder.binding.etLeft.setText(item.left?.toString() ?: "-") // Используем value1
+
+        // Видимость и текст для etRight
+        if (isDoubleSided) {
+            holder.binding.etRight.visibility = View.VISIBLE
+        } else {
+            holder.binding.divider.visibility = View.GONE
+            holder.binding.etRight.visibility = View.GONE
+        }
+
+        // Нажатия (остаются без изменений)
+        holder.binding.etLeft.isFocusable = false
+        holder.binding.etLeft.isClickable = true
+        holder.binding.etLeft.setOnClickListener {
+            onItemClick(item.label, true) // true для левого/одиночного
+        }
+
+        if (isDoubleSided) {
+            holder.binding.etRight.isFocusable = false
+            holder.binding.etRight.isClickable = true
+            holder.binding.etRight.setOnClickListener {
+                onItemClick(item.label, false) // false для правого
+            }
+        }
     }
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newItems: List<DashboardItem.BodyMeasurementItem>)
     {

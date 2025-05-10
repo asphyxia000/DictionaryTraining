@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 interface BodyMeasurementsRepository {
     suspend fun getAll(): Flow<List<BodyMeasurementsEntity>>
-    suspend fun getLatest():BodyMeasurementsEntity?
+    fun getLatest():Flow<BodyMeasurementsEntity?>
     suspend fun getMeasurementsByDate(date: LocalDate): BodyMeasurementsEntity? // Если нужно будет получать замеры за конкретную дату
     suspend fun insertOrUpdate(measurementsEntity: BodyMeasurementsEntity)
     suspend fun deleteMeasurement(measurementsEntity: BodyMeasurementsEntity)

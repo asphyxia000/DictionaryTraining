@@ -21,8 +21,8 @@ interface BodyMeasurementsDAO {
     @Delete
     suspend fun delete(measurementsEntity: BodyMeasurementsEntity)
 
-    @Query ("Select * from BodyMeasurements order by date Limit 1")
-    suspend fun getLatest(): BodyMeasurementsEntity?
+    @Query ("Select * from BodyMeasurements order by date DESC  Limit 1")
+     fun getLatest(): Flow<BodyMeasurementsEntity?>
 
     @Query("SELECT * FROM BodyMeasurements WHERE date = :date LIMIT 1")
     suspend fun getByDate(date: LocalDate): BodyMeasurementsEntity?

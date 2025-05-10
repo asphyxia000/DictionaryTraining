@@ -11,82 +11,60 @@
         android:layout_height="wrap_content"
         android:padding="6dp">
 
-        <!-- Название замера -->
+        <!-- название части тела -->
         <TextView
             android:id="@+id/tvBodyPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Бедро"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Левый замер -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/leftInputLayout"
+        <!-- левое значение -->
+        <TextView
+            android:id="@+id/etLeft"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:boxBackgroundMode="none"
-            android:backgroundTint="@android:color/transparent"
+            android:text="-"
+            android:textSize="25sp"
+            android:textAlignment="center"
             app:layout_constraintTop_toBottomOf="@id/tvBodyPart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/divider"
-            app:layout_constraintHorizontal_chainStyle="spread_inside">
+            app:layout_constraintEnd_toStartOf="@id/divider" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLeft"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:hint="-"
-                android:textSize="25sp"
-                android:inputType="numberDecimal"
-                android:textAlignment="center"
-                android:backgroundTint="@android:color/transparent" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Вертикальный разделитель -->
+        <!-- вертикальный разделитель -->
         <View
             android:id="@+id/divider"
             android:layout_width="1dp"
             android:layout_height="45dp"
             android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toTopOf="@+id/leftInputLayout"
-            app:layout_constraintBottom_toBottomOf="@+id/leftInputLayout"
-            app:layout_constraintStart_toEndOf="@+id/leftInputLayout"
-            app:layout_constraintEnd_toStartOf="@+id/rightInputLayout" />
+            app:layout_constraintTop_toTopOf="@id/etLeft"
+            app:layout_constraintBottom_toBottomOf="@id/etLeft"
+            app:layout_constraintStart_toEndOf="@id/etLeft"
+            app:layout_constraintEnd_toStartOf="@id/etRight" />
 
-        <!-- Правый замер -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rightInputLayout"
+        <!-- правое значение -->
+        <TextView
+            android:id="@+id/etRight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:boxBackgroundMode="none"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintTop_toTopOf="@+id/leftInputLayout"
-            app:layout_constraintBottom_toBottomOf="@+id/leftInputLayout"
+            android:text="-"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="@id/etLeft"
+            app:layout_constraintBottom_toBottomOf="@id/etLeft"
             app:layout_constraintStart_toEndOf="@id/divider"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etRight"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:hint="-"
-                android:textSize="25sp"
-                android:inputType="numberDecimal"
-                android:textAlignment="center"
-                android:backgroundTint="@android:color/transparent" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Горизонтальный разделитель -->
+    <!-- горизонтальный разделитель снизу -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="30dp"
-        android:background="@android:color/darker_gray"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:background="@android:color/darker_gray" />
 </FrameLayout>

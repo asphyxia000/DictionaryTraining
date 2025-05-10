@@ -466,6 +466,41 @@ val MIGRATION_14_15 = object : Migration(14,15){
 
 }
 
+val MIGRATION_15_16 = object : Migration(15, 16) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.run {
+            // Удаляем старую таблицу, если есть
+            execSQL("DROP TABLE IF EXISTS BodyMeasurements")
+
+            // Создаём новую таблицу с nullable полями (без NOT NULL)
+            execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS BodyMeasurements (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    date TEXT NOT NULL,
+                    neck INTEGER,
+                    shoulders INTEGER,
+                    chest INTEGER,
+                    waist INTEGER,
+                    pelvis INTEGER,
+                    bedroLeft INTEGER,
+                    ikriLeft INTEGER,
+                    begroRight INTEGER,
+                    ikriRight INTEGER,
+                    forearmsLeft INTEGER,
+                    forearmsRight INTEGER,
+                    bicepsLeft INTEGER,
+                    bicepsRight INTEGER,
+                    tricepsLeft INTEGER,
+                    tricepsRight INTEGER
+                )
+                """.trimIndent()
+            )
+        }
+    }
+}
+
+
 
 
 

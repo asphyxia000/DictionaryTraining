@@ -10,6 +10,7 @@ import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 
 class DashboardViewModel(
@@ -19,28 +20,48 @@ class DashboardViewModel(
 ) : ViewModel() {
 
     private val _selectedPeriod = MutableLiveData<PeriodSelection?>(PeriodSelection.last30day)
-    val selectedPeriod: LiveData<PeriodSelection?> get()=_selectedPeriod
+    val selectedPeriod: LiveData<PeriodSelection?> get() = _selectedPeriod
 
-    fun setPeriod(period:PeriodSelection){
-        _selectedPeriod.value=period
+    fun setPeriod(period: PeriodSelection) {
+        _selectedPeriod.value = period
     }
-    fun getBodyMeasurementsUI(): Flow<List<DashboardItem.BodyMeasurementItem>> = flow {
-        val latest = bodyMeasurementsRepository.getLatest()
-        val list = listOf(
-            DashboardItem.BodyMeasurementItem("Шея", latest?.neck?.toInt(), null),
-            DashboardItem.BodyMeasurementItem("Плечи", latest?.shoulders?.toInt(), null),
-            DashboardItem.BodyMeasurementItem("Грудь", latest?.chest?.toInt(), null),
-            DashboardItem.BodyMeasurementItem("Талия", latest?.waist?.toInt(), null),
-            DashboardItem.BodyMeasurementItem("Таз", latest?.pelvis?.toInt(), null),
 
-            DashboardItem.BodyMeasurementItem("Предплечья", latest?.forearmsLeft, latest?.forearmsRight),
-            DashboardItem.BodyMeasurementItem("Бицепсы", latest?.bicepsLeft, latest?.bicepsRight),
-            DashboardItem.BodyMeasurementItem("Трицепсы", latest?.tricepsLeft, latest?.tricepsRight),
-            DashboardItem.BodyMeasurementItem("Бедра", latest?.bedroLeft, latest?.bicepsRight),
-            DashboardItem.BodyMeasurementItem("Икры", latest?.ikriLeft, latest?.ikriRight)
-        )
-        emit(list)
-    }
+    fun getBodyMeasurementsUI(): Flow<List<DashboardItem.BodyMeasurementItem>> =
+        bodyMeasurementsRepository.getLatest().map { latest ->
+                listOf(
+                    DashboardItem.BodyMeasurementItem("Шея", latest?.neck, null),
+                    DashboardItem.BodyMeasurementItem("Плечи", latest?.shoulders, null),
+                    DashboardItem.BodyMeasurementItem("Грудь", latest?.chest, null),
+                    DashboardItem.BodyMeasurementItem("Талия", latest?.waist, null),
+                    DashboardItem.BodyMeasurementItem("Таз", latest?.pelvis, null),
+
+                    DashboardItem.BodyMeasurementItem(
+                        "Предплечья",
+                        latest?.forearmsLeft,
+                        latest?.forearmsRight
+                    ),
+                    DashboardItem.BodyMeasurementItem(
+                        "Бицепсы",
+                        latest?.bicepsLeft,
+                        latest?.bicepsRight
+                    ),
+                    DashboardItem.BodyMeasurementItem(
+                        "Трицепсы",
+                        latest?.tricepsLeft,
+                        latest?.tricepsRight
+                    ),
+                    DashboardItem.BodyMeasurementItem(
+                        "Бедра",
+                        latest?.bedroLeft,
+                        latest?.begroRight
+                    ),
+                    DashboardItem.BodyMeasurementItem(
+                        "Икры",
+                        latest?.ikriLeft,
+                        latest?.ikriRight
+                    )
+                )
+            }
     fun getGeneralStatsUI(period: PeriodSelection): Flow<List<DashboardItem.GeneralStatItem>> = flow {
         generalTrainingStatsRepository.recalculateGeneralStats(period)
         val latest = generalTrainingStatsRepository.geAllStats().first().maxByOrNull { it.date }

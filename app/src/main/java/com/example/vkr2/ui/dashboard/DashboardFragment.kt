@@ -44,7 +44,10 @@ class DashboardFragment : Fragment() {
 
         viewModel = ViewModelProvider(this, factory)[DashboardViewModel::class.java]
 
-        zamerAdapter = ZamersAdapter(emptyList())
+        zamerAdapter = ZamersAdapter(emptyList()) { bodyPart, isLeft ->
+            BSDZamers.newInstance(bodyPart, isLeft).show(parentFragmentManager, "zamer_dialog")
+        }
+
         statsAdapter = DashboardAdapter(emptyList())
         // Настройка LayoutManager для замеров и статистики
         binding.view3.layoutManager = LinearLayoutManager(requireContext())
