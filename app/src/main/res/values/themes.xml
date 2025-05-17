@@ -52,4 +52,7 @@
 
     <color name="btn_add_sets">#80000000</color>
     <color name="comments_image">#80000000</color>
+
+    <color name="launcher_bg">#FFFFFF</color>   <!-- фон для светлой темы -->
+    <color name="splash_bg">  @color/launcher_bg </color>
 </resources>

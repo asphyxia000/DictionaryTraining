@@ -43,6 +43,12 @@
         <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="CustomSwitchStyle" parent="Theme.Material3.DayNight">
+        <item name="colorControlActivated">@color/blue_500</item> <!-- Цвет включённого состояния -->
+        <item name="colorControlNormal">@color/gray</item> <!-- Цвет выключенного состояния -->
+    </style>
+
+
     <style name="CustomDialogThemeFotSets" parent="Theme.Material3.DayNight.Dialog">
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.75</item>
@@ -77,6 +83,10 @@
         <item name="android:textSize">18sp</item> <!-- (опционально) размер -->
     </style>
 
-
+    <style name="CustomAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
 
 </resources>

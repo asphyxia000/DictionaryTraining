@@ -7,20 +7,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.R
 import com.example.vkr2.databinding.DialogAddSetBinding
-import com.example.vkr2.repository.InfoStatsRepository
-import com.example.vkr2.repository.InfoStatsRepositoryImpl
+import com.example.vkr2.ui.AdaptersDirectory.SetsAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExerciseDetailFragment
-import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExerciseDetailViewModel
-import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExercisesDetailViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class SetsEditDialogFragment(
     private val trainingId:Int,
@@ -116,18 +109,24 @@ class SetsEditDialogFragment(
             onAddSet(newSet)
         }
         binding.buttonCheckSets.setOnClickListener {
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            binding.setsRecyclerView.clearFocus()
             binding.root.clearFocus()
 
-            val updatedSets = adapter.getCurrentSets()
-                .filter { it.weight != 0 || it.reps != 0 }
+            binding.setsRecyclerView.postDelayed({
+                val updatedSets = adapter.getCurrentSets()
+                    .filter { it.weight != 0 || it.reps != 0 }
 
-            updatedSets.forEachIndexed { index, set ->
-                set.exerciseOrder = index
-                onUpdateSet(set)
-            }
+                updatedSets.forEachIndexed { index, set ->
+                    set.exerciseOrder = index
+                    onUpdateSet(set)
+                }
 
-            dismiss()
+                dismiss()
+            }, 100)
         }
+
 
         binding.closeButton.setOnClickListener(){
             dismiss()

@@ -36,6 +36,9 @@ interface TrainingDAO {
     @Query("Select * from Trainings ORDER BY date DESC,createdAt DESC")
     fun getAllTrainings():Flow<List<TrainingsEntity>>
 
+    @Query("SELECT * FROM Trainings")
+    suspend fun getAllTrainingsList(): List<TrainingsEntity>
+
     @Transaction
     @Query("Select * from Sets where trainingId = :trainingId and exerciseId = :exerciseId Order by 'order' ASC")
     fun getSetsforExercise(trainingId: Int,exerciseId: Int):Flow<List<SetEntity>>
@@ -55,6 +58,21 @@ interface TrainingDAO {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrainingExercises(trainingExerciseCrossRefs: List<TrainingExerciseCrossRef>)
+
+    @Query("DELETE FROM Trainings")
+    suspend fun deleteAllTrainings()
+
+    @Query("DELETE FROM Sets")
+    suspend fun deleteAllSets()
+    @Query("DELETE FROM Sets WHERE trainingId = :trainingId AND exerciseId = :exerciseId")
+    suspend fun deleteSetsForExercise(trainingId: Int, exerciseId: Int)
+
+    @Query("DELETE FROM trainingexercises")
+    suspend fun deleteAllCrossRefs()
+
+    @Query("SELECT * FROM TrainingExercises")
+    suspend fun getAllCrossRefs(): List<TrainingExerciseCrossRef>
+
 
 
 }

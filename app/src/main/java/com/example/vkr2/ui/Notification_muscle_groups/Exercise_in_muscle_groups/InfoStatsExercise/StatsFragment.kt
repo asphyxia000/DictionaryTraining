@@ -7,10 +7,10 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.vkr2.DataBase.Exercises.DetailExercise.ExerciseStats
 import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentStatsBinding
 import com.example.vkr2.repository.InfoStatsRepositoryImpl
+import com.example.vkr2.ui.AdaptersDirectory.StatsAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate

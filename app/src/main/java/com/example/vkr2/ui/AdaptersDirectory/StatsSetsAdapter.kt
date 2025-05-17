@@ -1,4 +1,4 @@
-package com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,12 +14,12 @@ class StatsSetsAdapter(private val sets: List<SetEntity>) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): StatsSetsAdapter.SetViewHolder {
+    ): SetViewHolder {
         val binding = ItemSetStatsBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return SetViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: StatsSetsAdapter.SetViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
         val set = sets[position]
         holder.binding.setNumber.text = "${position+1}"
         holder.binding.weight.text = "${set.weight ?: 0}"

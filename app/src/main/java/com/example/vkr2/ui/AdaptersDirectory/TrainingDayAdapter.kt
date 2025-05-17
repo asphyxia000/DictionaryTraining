@@ -1,4 +1,4 @@
-package com.example.vkr2.ui.home
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.util.Log
 import android.view.Gravity
@@ -6,13 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.DataBase.Trainings.TrainingsEntity
 import com.example.vkr2.R
 import com.example.vkr2.databinding.ViewholderTrainingdayBinding
-import kotlinx.coroutines.awaitCancellation
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 

@@ -1,35 +1,25 @@
 package com.example.vkr2.ui.home.TrainingsDay
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentTrainingsDetailBinding
 import com.example.vkr2.repository.InfoStatsRepositoryImpl
 import com.example.vkr2.repository.TrainingRepositoryImpl
+import com.example.vkr2.ui.AdaptersDirectory.TrainingDetailAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.NotificationsDialogFragment
-import com.example.vkr2.ui.Notification_muscle_groups.NotificationsFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.sql.Date
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -71,9 +61,16 @@ class TrainingsDetailFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         trainingId = arguments?.getInt("trainingId") ?: return
 
-        adapter = TrainingDetailAdapter(trainingId) { exercise ->
-            showDialog(exercise.ExercisesId, exercise.ExercisesName)
-        }
+        adapter = TrainingDetailAdapter(
+            trainingId = trainingId,
+            onExercisesClick = { exercise ->
+                showDialog(exercise.ExercisesId, exercise.ExercisesName)
+            },
+            onDeleteExercise = { exercise ->
+                viewModel.deleteExercise(trainingId, exercise.ExercisesId)
+            }
+        )
+
 
         binding.recyclerViewExercises.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewExercises.adapter = adapter

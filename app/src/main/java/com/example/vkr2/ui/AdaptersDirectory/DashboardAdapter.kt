@@ -1,10 +1,11 @@
-package com.example.vkr2.ui.dashboard
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.databinding.ViewholderForStatsAllBinding
+import com.example.vkr2.ui.dashboard.DashboardItem
 
 class DashboardAdapter(
     private var items: List<DashboardItem.GeneralStatItem>

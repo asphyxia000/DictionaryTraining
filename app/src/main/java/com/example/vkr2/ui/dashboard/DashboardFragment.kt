@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +13,8 @@ import com.example.vkr2.R
 import com.example.vkr2.databinding.FragmentDashboardBinding
 import com.example.vkr2.repository.BodyMeasurementsRepositoryImpl
 import com.example.vkr2.repository.GeneralTrainingStatsRepositoryImpl
+import com.example.vkr2.ui.AdaptersDirectory.DashboardAdapter
+import com.example.vkr2.ui.AdaptersDirectory.ZamersAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.PeriodSelection
 import kotlinx.coroutines.flow.first
 

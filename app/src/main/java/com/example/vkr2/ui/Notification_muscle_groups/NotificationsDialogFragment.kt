@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vkr2.R
 import com.example.vkr2.SharedSelection
 import com.example.vkr2.databinding.FragmentNotificationsBinding
+import com.example.vkr2.ui.AdaptersDirectory.NoExpAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.ExerciseDialogListFragment
 
 class NotificationsDialogFragment : DialogFragment() {
@@ -177,89 +178,13 @@ class NotificationsDialogFragment : DialogFragment() {
 
     private fun setupObservers() {
         viewModel.text.observe(viewLifecycleOwner) {
-            binding.textforexp1.text = "Выберите группу"
+            binding.textforexp1.text = "Выберите группу мышц"
             binding.textViewdesc.text = "Для добавления упражнений"
         }
         viewModel.muscleGroups.observe(viewLifecycleOwner) { groups ->
             adapter.updateData(groups)
         }
     }
-
-//    private fun setupCustomToolbar(title:String){
-//        val constraintLayout = androidx.constraintlayout.widget.ConstraintLayout(requireContext()).apply {
-//            layoutParams = ViewGroup.LayoutParams(
-//                ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.MATCH_PARENT
-//            )
-//        }
-//
-//        val backContainer = FrameLayout(requireContext()).apply {
-//            id = View.generateViewId()
-//            layoutParams = ConstraintLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.MATCH_PARENT
-//            ).apply {
-//                startToStart = ConstraintSet.PARENT_ID
-//                topToTop = ConstraintSet.PARENT_ID
-//                bottomToBottom = ConstraintSet.PARENT_ID
-//            }
-//            setPadding(24, 0, 24, 0)
-//            setOnClickListener {
-//                dismiss()
-//            }
-//        }
-//
-//        val backButton = AppCompatTextView(requireContext()).apply {
-//            id = View.generateViewId()
-//            text = "Назад"
-//            textSize = 14f
-//            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_500))
-//            layoutParams = FrameLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                Gravity.CENTER_VERTICAL
-//            )
-//        }
-//
-//        val titleTextView = AppCompatTextView(requireContext()).apply {
-//            id = View.generateViewId()
-//            text = title
-//            textSize = 22f
-//            setTextColor(ContextCompat.getColor(requireContext(), R.color.textforexp1))
-//            layoutParams = ConstraintLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//            )
-//            gravity = Gravity.CENTER
-//            maxLines = 1
-//        }
-//
-//        backContainer.addView(backButton)
-//        constraintLayout.addView(backContainer)
-//        constraintLayout.addView(titleTextView)
-//
-//        val constraintSet = ConstraintSet()
-//        constraintSet.clone(constraintLayout)
-//
-//        constraintSet.constrainWidth(titleTextView.id, ConstraintSet.WRAP_CONTENT)
-//        constraintSet.constrainHeight(titleTextView.id, ConstraintSet.WRAP_CONTENT)
-//        constraintSet.centerHorizontally(titleTextView.id, ConstraintSet.PARENT_ID)
-//        constraintSet.centerVertically(titleTextView.id, ConstraintSet.PARENT_ID)
-//
-//        constraintSet.connect(backButton.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-//        constraintSet.connect(backButton.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-//        constraintSet.connect(backButton.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-//
-//        constraintSet.applyTo(constraintLayout)
-//
-//        binding.dialogToolbar.apply {
-//            visibility = View.VISIBLE
-//            navigationIcon = null
-//            addView(constraintLayout)
-//            setContentInsetsAbsolute(0, 0)
-//            setContentInsetsRelative(0, 0)
-//        }
-//    }
 
     private fun setupButtons() {
         binding.cancelBtn.setOnClickListener {

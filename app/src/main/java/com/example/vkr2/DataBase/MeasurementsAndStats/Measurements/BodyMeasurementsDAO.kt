@@ -20,6 +20,8 @@ interface BodyMeasurementsDAO {
 
     @Delete
     suspend fun delete(measurementsEntity: BodyMeasurementsEntity)
+    @Query("DELETE FROM BodyMeasurements")
+    suspend fun deleteAll()
 
     @Query ("Select * from BodyMeasurements order by date DESC  Limit 1")
      fun getLatest(): Flow<BodyMeasurementsEntity?>
@@ -29,4 +31,7 @@ interface BodyMeasurementsDAO {
 
     @Query("Select * from BodyMeasurements order by date")
     fun getAll(): Flow<List<BodyMeasurementsEntity>>
+
+    @Query("SELECT * FROM BodyMeasurements")
+    suspend fun getAllDirect(): List<BodyMeasurementsEntity>
 }

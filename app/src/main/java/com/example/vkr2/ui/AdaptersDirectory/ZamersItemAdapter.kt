@@ -1,42 +1,60 @@
-package com.example.vkr2.ui.dashboard
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.DataBase.Measurements.BodyMeasurementsEntity
+import com.example.vkr2.R
 import com.example.vkr2.databinding.ViewholderForBodyBinding
 import java.time.format.DateTimeFormatter
 
 class ZamersItemAdapter(
-  private val bodyPart: String,
-    private val isLeft: Boolean
-) :RecyclerView.Adapter<ZamersItemAdapter.ZamerViewHolder>() {
+    private val bodyPart: String,
+    private val isLeft: Boolean,
+    private val onDeleteClick: (BodyMeasurementsEntity) -> Unit
+) : RecyclerView.Adapter<ZamersItemAdapter.ZamerViewHolder>() {
+
     private var items = listOf<BodyMeasurementsEntity>()
 
-    inner class ZamerViewHolder(var binding: ViewholderForBodyBinding) : RecyclerView.ViewHolder(binding.root)
-
+    inner class ZamerViewHolder(val binding: ViewholderForBodyBinding) : RecyclerView.ViewHolder(binding.root)
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(data: List<BodyMeasurementsEntity>){
+    fun submitList(data: List<BodyMeasurementsEntity>) {
         items = data.sortedByDescending { it.date }
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ZamersItemAdapter.ZamerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ZamerViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ViewholderForBodyBinding.inflate(inflater,parent,false)
+        val binding = ViewholderForBodyBinding.inflate(inflater, parent, false)
         return ZamerViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ZamersItemAdapter.ZamerViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ZamerViewHolder, position: Int) {
         val item = items[position]
         holder.binding.dateZamersBody.text = item.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-        holder.binding.textView2.text = bodyValue(item).toString()
+        holder.binding.textView2.text = bodyValue(item)?.toString() ?: "-"
+
+        holder.binding.optionsMenu.setOnClickListener { v ->
+            val popup = PopupMenu(v.context, v, Gravity.END, 0, R.style.MyPopupMenu)
+            popup.menuInflater.inflate(R.menu.zamer_popup_menu, popup.menu)
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_delete_zamer -> {
+                        onDeleteClick(item)
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
+        }
     }
+
+    override fun getItemCount(): Int = items.size
 
     private fun bodyValue(measurement: BodyMeasurementsEntity): Int? {
         return when (bodyPart) {
@@ -53,5 +71,4 @@ class ZamersItemAdapter(
             else -> null
         }
     }
-    override fun getItemCount(): Int = items.size
 }

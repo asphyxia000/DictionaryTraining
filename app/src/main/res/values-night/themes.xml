@@ -20,7 +20,6 @@
 
     </style>
 
-
     <color name="cardBackground">#272727</color>
     <color name="Calendar">@color/white</color>
     <color name="CalendarSelect">#000000</color>
@@ -45,4 +44,8 @@
 
     <color name="btn_add_sets">#80FFFFFF</color>
     <color name="comments_image">#FFFFFF</color>
+
+    <color name="launcher_bg">#FFFFFF</color>   <!-- фон для тёмной темы -->
+    <color name="launcher_fg">#000000</color>   <!-- человечек для тёмной темы -->
+    <color name="splash_bg">  @color/launcher_bg </color>
 </resources>

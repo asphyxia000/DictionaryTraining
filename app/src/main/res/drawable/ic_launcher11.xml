@@ -1,0 +1,61 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500"
+    android:name="ic_launcher11"
+    >
+
+  <path
+      android:pathData="M0,0h500v500h-500z"
+      android:fillColor="@android:color/transparent"/>
+
+  <path
+      android:pathData="M50,105 H450 V115 H50 Z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M35,80 V140 H50 V80 Z"
+      android:fillColor="@color/blue_500"/>
+  <path
+      android:pathData="M20,80 V140 H35 V80 Z"
+      android:fillColor="@color/blue_500"/>
+  <path
+      android:pathData="M5,80 V140 H20 V80 Z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M450,80 V140 H465 V80 Z"
+      android:fillColor="@color/blue_500"/>
+  <path
+      android:pathData="M465,80 V140 H480 V80 Z"
+      android:fillColor="@color/blue_500"/>
+  <path
+      android:pathData="M480,80 V140 H495 V80 Z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M250,180m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M220,210h60v100h-60z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M190,310h30v100h-30z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M280,310h30v100h-30z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M220,210 L230,210 L160,120 L150,120 Z"
+      android:fillColor="@color/blue_500"/>
+
+  <path
+      android:pathData="M280,210 L270,210 L340,120 L350,120 Z"
+      android:fillColor="@color/blue_500"/>
+
+</vector>

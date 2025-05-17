@@ -25,6 +25,12 @@ class TrainindDetailViewModel(
             }
         }
     }
+    fun deleteExercise(trainingId: Int, exerciseId: Int) {
+        viewModelScope.launch {
+            trainingRepository.removeExerciseFromTraining(trainingId, exerciseId)
+            loadTraining(trainingId)
+        }
+    }
 
     fun saveChanges(trainingId: Int, newName: String, newComment: String) {
         viewModelScope.launch {

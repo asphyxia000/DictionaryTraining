@@ -23,6 +23,8 @@ import androidx.fragment.app.viewModels
 import com.example.vkr2.DataBase.Trainings.TrainingsEntity
 import com.example.vkr2.databinding.DialogConfirmAddBinding
 import com.example.vkr2.databinding.DialogConfirmDeleteBinding
+import com.example.vkr2.ui.AdaptersDirectory.TrainingDayAdapter
+import com.example.vkr2.ui.AdaptersDirectory.WeekAdapter
 import com.example.vkr2.ui.home.TrainingsDay.TrainingsDetailFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 

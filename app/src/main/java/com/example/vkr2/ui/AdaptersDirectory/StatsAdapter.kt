@@ -1,10 +1,11 @@
-package com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.databinding.ItemStatsBinding
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.StatsItems
 
 class StatsAdapter(private val items: List<StatsItems>):
 RecyclerView.Adapter<StatsAdapter.StatsViewHolder>(){

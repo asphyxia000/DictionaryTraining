@@ -28,7 +28,9 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.vkr2.ui.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="Настройки"
+        tools:layout="@layout/fragment_settings"
+        />
 
     <fragment
         android:id="@+id/navigation_calculate"

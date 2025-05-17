@@ -1,19 +1,22 @@
 package com.example.vkr2.ui.dashboard
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vkr2.DataBase.Measurements.BodyMeasurementsEntity
 import com.example.vkr2.R
 import com.example.vkr2.databinding.BottomsheetForBodyBinding
-import com.example.vkr2.repository.BodyMeasurementsRepository
 import com.example.vkr2.repository.BodyMeasurementsRepositoryImpl
+import com.example.vkr2.ui.AdaptersDirectory.ZamersItemAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.first
@@ -59,7 +62,28 @@ class BSDZamers: BottomSheetDialogFragment() {
         _binding = BottomsheetForBodyBinding.inflate(inflater, container, false)
         repository = BodyMeasurementsRepositoryImpl(requireContext(),lifecycleScope)
         binding.nameZamer.text = bodyPart
-        zamersAdapter = ZamersItemAdapter(bodyPart, isLeft)
+        zamersAdapter = ZamersItemAdapter(bodyPart, isLeft){
+            zamer->
+            val themedContext = ContextThemeWrapper(requireContext(), R.style.CustomAlertDialogTheme)
+            val dialog = MaterialAlertDialogBuilder(themedContext)
+                .setTitle("Удаление замера")
+                .setMessage("Удалить замер от ${zamer.date}?")
+                .setNegativeButton("Отмена", null)
+                .setPositiveButton("Удалить") { _, _ ->
+                    lifecycleScope.launch {
+                        repository.deleteMeasurement(zamer)
+                        loadZamer()
+                    }
+                }
+                .create()
+
+            dialog.setOnShowListener {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                    ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_500))
+            }
+            dialog.show()
+
+        }
         binding.zamerConteiner.layoutManager = LinearLayoutManager(requireContext())
         binding.zamerConteiner.adapter = zamersAdapter
         binding.closeZamer.setOnClickListener(){dismiss()}

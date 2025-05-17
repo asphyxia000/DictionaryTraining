@@ -1,4 +1,4 @@
-package com.example.vkr2.ui.dashboard
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.databinding.ViewholderForZamersBinding
+import com.example.vkr2.ui.dashboard.DashboardItem
 
 class ZamersAdapter (
     private var items: List<DashboardItem.BodyMeasurementItem>,

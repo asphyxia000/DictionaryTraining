@@ -14,6 +14,7 @@ import com.example.vkr2.DataBase.MuscleGroup.MuscleGroupEntity
 import com.example.vkr2.R
 import com.example.vkr2.SharedSelection
 import com.example.vkr2.databinding.FragmentNotificationsBinding
+import com.example.vkr2.ui.AdaptersDirectory.NoExpAdapter
 
 class NotificationsFragment : Fragment() {
 
@@ -99,8 +100,8 @@ class NotificationsFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.text.observe(viewLifecycleOwner) {
-            binding.textforexp1.text = "Группы упражнений"
-            binding.textViewdesc.text = "Выберите определенную группу упражнений"
+            binding.textforexp1.text = "Группы мышц"
+            binding.textViewdesc.text = "Выберите определенную группу мышц"
         }
         viewModel.muscleGroups.observe(viewLifecycleOwner) { groups ->
             adapter.updateData(groups)

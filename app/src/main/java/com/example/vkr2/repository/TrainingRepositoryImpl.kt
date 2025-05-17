@@ -33,15 +33,18 @@ class TrainingRepositoryImpl(
         trainingDAO.deleteTraining(training)
     }
 
+    override suspend fun removeExerciseFromTraining(trainingId: Int, exerciseId: Int) {
+        trainingDAO.deleteExercisesfromTraining(trainingId, exerciseId)
+        trainingDAO.deleteSetsForExercise(trainingId, exerciseId)
+    }
+
+
     override suspend fun addExerciseToTraining(trainingId: Int, exerciseId: Int) {
         trainingDAO.insertTrainingExercise(
             TrainingExerciseCrossRef(trainingId,exerciseId)
         )
     }
 
-    override suspend fun removeExerciseFromTraining(trainingId: Int, exerciseId: Int) {
-        trainingDAO.deleteExercisesfromTraining(trainingId,exerciseId)
-    }
 
     override suspend fun addSet(set: SetEntity) {
         trainingDAO.insertSet(set)

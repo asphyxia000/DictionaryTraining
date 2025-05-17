@@ -28,8 +28,15 @@
                 android:background="@color/white"
                 android:backgroundTint="@color/white"
                 android:contentDescription="Exercise gif" />
-
         </androidx.cardview.widget.CardView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Описание: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            />
         <TextView
             android:id="@+id/textDescription"
             android:layout_width="match_parent"
@@ -39,7 +46,14 @@
             android:background="@drawable/bg_transparent_outline"
             android:textColor="@color/dialog_text"
             />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Советы: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            />
         <TextView
             android:id="@+id/textTips"
             android:layout_width="match_parent"

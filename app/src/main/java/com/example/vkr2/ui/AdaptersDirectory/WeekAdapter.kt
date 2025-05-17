@@ -1,4 +1,4 @@
-package com.example.vkr2.ui.home
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.DataBase.Trainings.TrainingsEntity
 import com.example.vkr2.R
 import com.example.vkr2.databinding.ViewholderWeekBinding
+import com.example.vkr2.ui.home.WeekGroup
 
 class WeekAdapter (
     private val context: Context,

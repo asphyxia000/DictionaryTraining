@@ -6,7 +6,9 @@ import java.time.LocalDateTime
 
 class Converter {
     @TypeConverter
-    fun fromLocalDate(date: LocalDate): String = date.toString()
+    fun fromLocalDate(date: LocalDate?): String {
+        return date?.toString() ?: ""
+    }
     @TypeConverter
     fun toLocalDate(value:String):LocalDate = LocalDate.parse(value)
     @TypeConverter
@@ -14,7 +16,7 @@ class Converter {
         return value?.let { LocalDateTime.parse(it) }
     }
     @TypeConverter
-    fun dateToTimeStamp(date: LocalDateTime?):String?{
-        return date?.toString()
+    fun dateToTimeStamp(date: LocalDateTime?): String? {
+        return date?.toString() ?: ""
     }
 }

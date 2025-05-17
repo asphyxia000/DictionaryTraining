@@ -1,18 +1,17 @@
-package com.example.vkr2.ui.home.TrainingsDay
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vkr2.DataBase.Trainings.SetEntity
 import com.example.vkr2.databinding.ItemsSetsBinding
 import androidx.core.widget.addTextChangedListener
-import com.bumptech.glide.Glide
-import com.example.vkr2.DataBase.Exercises.ExercisesEntity
+import com.example.vkr2.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -102,7 +101,7 @@ class SetsAdapter(
     private fun showDeleteConfirm(position: Int, context: Context) {
         val set = sets[position]
 
-        MaterialAlertDialogBuilder(context)
+        val dialog = MaterialAlertDialogBuilder(context, R.style.CustomAlertDialogTheme)
             .setTitle("Удалить подход?")
             .setMessage("Вы действительно хотите удалить этот подход?")
             .setPositiveButton("Удалить") { _, _ ->
@@ -113,7 +112,6 @@ class SetsAdapter(
                     notifyDataSetChanged()
                     onUpdateSet(set) // сохраняем изменения
                 } else {
-                    // Удаляем как обычно
                     val removedSet = sets.removeAt(position)
                     notifyItemRemoved(position)
                     notifyDataSetChanged()
@@ -121,8 +119,16 @@ class SetsAdapter(
                 }
             }
             .setNegativeButton("Отмена", null)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                ?.setTextColor(ContextCompat.getColor(context, R.color.blue_500))
+        }
+
+        dialog.show()
     }
+
 
 
 

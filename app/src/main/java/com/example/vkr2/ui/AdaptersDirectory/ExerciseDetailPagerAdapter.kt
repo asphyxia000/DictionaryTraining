@@ -1,7 +1,9 @@
-package com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise
+package com.example.vkr2.ui.AdaptersDirectory
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.InfoFragment
+import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.StatsFragment
 
 class ExerciseDetailPagerAdapter(
     fragment: Fragment,

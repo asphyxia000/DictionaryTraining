@@ -16,10 +16,4 @@
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_expmuscle"
         android:title="@string/title_notifications" />
-
-    <item
-        android:id="@+id/navigation_calculate"
-        android:icon="@drawable/ic_calculate"
-        android:title="@string/title_calculate" />
-
 </menu>

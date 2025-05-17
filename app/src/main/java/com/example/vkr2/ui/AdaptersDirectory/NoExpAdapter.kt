@@ -1,4 +1,4 @@
-package com.example.vkr2.ui.Notification_muscle_groups
+package com.example.vkr2.ui.AdaptersDirectory
 
 import android.view.LayoutInflater
 import android.view.View

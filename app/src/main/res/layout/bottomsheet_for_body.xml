@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bottomsheet_bg">
 
     <Toolbar
         android:id="@+id/toolbar2"
@@ -17,10 +18,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_marginStart="0dp"
             android:backgroundTint="@android:color/transparent"
             android:text="Закрыть"
             android:textColor="@color/blue_500"
-            />
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            app:iconPadding="0dp"/>
 
         <TextView
             android:id="@+id/name_zamer"
@@ -28,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="Шея"
+            android:textColor="?attr/colorPrimary"
             android:textStyle="bold"
             android:textSize="20sp"
             />
@@ -43,7 +48,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/zamer_conteiner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="900dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
