@@ -50,11 +50,13 @@ class WeekAdapter (
             val b = holder.binding
 
             b.weekTitle.text = item.title
-            b.weekCount.text = when(item.trainings.size){
-                1->"1 тренировка"
-                in 2..4->"${item.trainings.size} тренировки"
+            b.weekCount.text = when {
+                item.trainings.size % 100 in 11..14 -> "${item.trainings.size} тренировок"
+                item.trainings.size % 10 == 1 -> "${item.trainings.size} тренировка"
+                item.trainings.size % 10 in 2..4 -> "${item.trainings.size} тренировки"
                 else -> "${item.trainings.size} тренировок"
             }
+
 
             val innerAdapter = TrainingDayAdapter(item.trainings,  onItemClick = onItemClick, onEdit = onEdit, onDelete = onDelete)
             b.weekRecycler.layoutManager = LinearLayoutManager(context)

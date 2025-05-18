@@ -23,6 +23,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationCompat
@@ -403,19 +404,29 @@ class SettingsFragment : Fragment() {
 
 
     private fun showRestoreConfirmDialog(backup: BackupInfo){
-        MaterialAlertDialogBuilder(requireContext())
+        val trainingText = when {
+            backup.trainingCount % 100 in 11..14 -> "${backup.trainingCount} тренировок"
+            backup.trainingCount % 10 == 1 -> "${backup.trainingCount} тренировка"
+            backup.trainingCount % 10 in 2..4 -> "${backup.trainingCount} тренировки"
+            else -> "${backup.trainingCount} тренировок"
+        }
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.CustomAlertDialogTheme)
             .setTitle("Восстановить резервную копию")
             .setMessage("""
-            ${backup.trainingCount} тренировок
+            ${trainingText}
             ${DateUtils.getRelativeTimeSpanString(backup.createdAt)}
             Все текущие данные будут уничтожены. Продолжить?
             """.trimIndent())
             .setNegativeButton("Отмена",null)
-            .setPositiveButton("Восстановить"){_,_->
-                restoreBackup(requireContext(), backup)
-
-            }
+            .setPositiveButton("Восстановить",null)
             .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+            ContextCompat.getColor(requireContext(), R.color.blue_500)
+        )
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener{
+            restoreBackup(requireContext(),backup)
+            dialog.dismiss()
+        }
     }
 
     private fun gsonWithJavaTime(): Gson{

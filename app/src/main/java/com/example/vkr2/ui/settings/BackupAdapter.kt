@@ -31,7 +31,12 @@ class BackupAdapter(
         val context = holder.itemView.context
 
         holder.binding.apply {
-            tvTrainingCount.text = "${item.trainingCount} тренировок"
+            tvTrainingCount.text = when {
+                item.trainingCount % 100 in 11..14 -> "${item.trainingCount} тренировок"
+                item.trainingCount % 10 == 1 -> "${item.trainingCount} тренировка"
+                item.trainingCount % 10 in 2..4 -> "${item.trainingCount} тренировки"
+                else -> "${item.trainingCount} тренировок"
+            }
             tvTimeAgo.text = getRelativeTime(item.createdAt)
             tvSizeBackup.text = android.text.format.Formatter.formatShortFileSize(context,item.sizeInBytes)
             imbtnDownload.setOnClickListener{onRestoreClick(item)}
