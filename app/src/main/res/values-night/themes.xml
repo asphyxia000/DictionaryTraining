@@ -42,7 +42,7 @@
     <color name="trainingday_menu">@color/white</color>
     <color name="comment_detail_trainingday">#272727</color>
 
-    <color name="btn_add_sets">#80FFFFFF</color>
+    <color name="btn_add_sets">#FFFFFF</color>
     <color name="comments_image">#FFFFFF</color>
 
     <color name="launcher_bg">#FFFFFF</color>   <!-- фон для тёмной темы -->

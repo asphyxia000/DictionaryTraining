@@ -23,6 +23,9 @@ import com.example.vkr2.DataBase.Migrations.MIGRATION_13_14
 import com.example.vkr2.DataBase.Migrations.MIGRATION_14_15
 import com.example.vkr2.DataBase.Migrations.MIGRATION_15_16
 import com.example.vkr2.DataBase.Migrations.MIGRATION_16_17
+import com.example.vkr2.DataBase.Migrations.MIGRATION_17_18
+import com.example.vkr2.DataBase.Migrations.MIGRATION_18_19
+import com.example.vkr2.DataBase.Migrations.MIGRATION_19_20
 import com.example.vkr2.DataBase.Migrations.MIGRATION_1_2
 import com.example.vkr2.DataBase.Migrations.MIGRATION_2_3
 import com.example.vkr2.DataBase.Migrations.MIGRATION_3_4
@@ -49,7 +52,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-const val DATABASE_VERSION_CODE=17
+const val DATABASE_VERSION_CODE=20
 
 @Database(entities = [MuscleGroupEntity::class, ExercisesEntity::class,TagsExercisesEntity::class,TagsEntity::class,TrainingsEntity::class,SetEntity::class,
     TrainingExerciseCrossRef::class,ExerciseStats::class,ExerciseInfo::class,GeneralTrainingStatsEntity::class,BodyMeasurementsEntity::class], version = DATABASE_VERSION_CODE, exportSchema = true)
@@ -80,7 +83,8 @@ abstract class FitnessDatabase : RoomDatabase(){
                         .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                             MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
                             MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13,
-                            MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
+                            MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17,
+                            MIGRATION_17_18, MIGRATION_18_19, MIGRATION_19_20)
                         .addCallback(RoomDatabaseCallback(scope))
                         .build()
                 }
@@ -123,15 +127,15 @@ abstract class FitnessDatabase : RoomDatabase(){
                 muscleGroup.forEach { muscleGroupDAO.insertMG(it) }
 
                 val exercises = listOf(
-                    ExercisesEntity(1, "Жим лежа", 1,"zhim_lezha.webp"),
-                    ExercisesEntity(2, "Отжимания", 1,"otzhimanya.webp"),
-                    ExercisesEntity(3, "Подъем гантелей", 2,"zhim_lezha.webp"),
-                    ExercisesEntity(4, "Сгибание рук с гантелями", 2,"zhim_lezha.webp"),
-                    ExercisesEntity(5, "Приседания", 3,"zhim_lezha.webp"),
-                    ExercisesEntity(6, "Мертвый подъем", 4,"zhim_lezha.webp"),
-                    ExercisesEntity(7, "Жим плечами", 5,"zhim_lezha.webp"),
-                    ExercisesEntity(8, "Планка", 6,"zhim_lezha.webp"),
-                    ExercisesEntity(9, "Бег", 7,"zhim_lezha.webp")
+                    ExercisesEntity(1, "Жим лежа", 1,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(2, "Отжимания", 1,"otzhimanya.webp","STRENGTH"),
+                    ExercisesEntity(3, "Подъем гантелей", 2,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(4, "Сгибание рук с гантелями", 2,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(5, "Приседания", 3,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(6, "Мертвый подъем", 4,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(7, "Жим плечами", 5,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(8, "Планка", 6,"zhim_lezha.webp","STRENGTH"),
+                    ExercisesEntity(9, "Бег", 7,"zhim_lezha.webp","CARDIO_DISTANCE")
                 )
                 exercises.forEach { exercisesDAO.insertExercise(it) }
 

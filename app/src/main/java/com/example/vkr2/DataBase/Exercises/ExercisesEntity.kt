@@ -26,5 +26,7 @@ data class ExercisesEntity(
 
     val muscleGroupID:Int,
 
-    val imagePath: String
+    val imagePath: String,
+
+    val type: String
 )

@@ -3,6 +3,7 @@ package com.example.vkr2.ui.home.TrainingsDay
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
@@ -77,8 +78,12 @@ class TrainingsDetailFragment : DialogFragment() {
 
         viewModel.loadTraining(trainingId)
         viewModel.training.observe(viewLifecycleOwner) { data ->
-            originalTitle = data.training.name.replaceFirstChar { it.uppercase() }
-            originalComment = data.training.comment.replaceFirstChar { it.uppercase() }
+            if (data == null) {
+                Log.e("TrainingsDetailFragment", "Training data is null. Cannot update UI.")
+                return@observe
+            }
+            originalTitle = data.training.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            originalComment = data.training.comment.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
             binding.trainingTitle.setText(originalTitle)
             binding.trainingComment.setText(originalComment)
@@ -161,23 +166,44 @@ class TrainingsDetailFragment : DialogFragment() {
     }
 
     private fun showDialog(exerciseId: Int, exerciseName: String) {
-//        val selectedEx = viewModel.training.value?.exercises?.find {
-//            it.exercise.ExercisesId == exerciseId
-//        }
         lifecycleScope.launch {
             val currentSets = viewModel.getSetsForExercise(trainingId, exerciseId)
             val sets = currentSets.toMutableList()
 
-            // Получаем путь к картинке из текущей тренировки
-            val exerciseImagePath = viewModel.training.value?.exercises
-                ?.find { it.exercise.ExercisesId == exerciseId }
-                ?.exercise?.imagePath ?: ""
+            val trainingData = viewModel.training.value
+            if (trainingData == null) {
+                Log.e("TrainingsDetailFragment", "Cannot show SetsEditDialog: training data is null.")
+                return@launch
+            }
+
+            val exerciseWithData = trainingData.exercises
+                .find { it.exercise.ExercisesId == exerciseId }
+
+            if (exerciseWithData == null) {
+                Log.e("TrainingsDetailFragment", "Cannot show SetsEditDialog: exerciseWithData not found for id $exerciseId")
+                return@launch
+            }
+
+            val exerciseImagePath = exerciseWithData.exercise.imagePath ?: ""
+
+            val exerciseTypeString = exerciseWithData.exercise.type
+
+            val exerciseType = try {
+                ExerciseType.valueOf(exerciseTypeString.uppercase())
+            } catch (e: IllegalArgumentException) {
+                Log.w("TrainingsDetailFragment", "Invalid exercise type string: $exerciseTypeString. Defaulting to STRENGTH.")
+                ExerciseType.STRENGTH // Default type if parsing fails
+            } catch (e: Exception) {
+                Log.e("TrainingsDetailFragment", "Error parsing exercise type: $exerciseTypeString", e)
+                ExerciseType.STRENGTH // Default type on other errors
+            }
 
             SetsEditDialogFragment(
                 trainingId = trainingId,
                 exerciseId = exerciseId,
                 exerciseName = exerciseName,
                 exerciseImagePath = exerciseImagePath,
+                exerciseType = exerciseType, // Pass the determined ExerciseType
                 sets = sets,
                 onAddSet = { viewModel.addSet(it) },
                 onUpdateSet = { viewModel.updateSet(it) },
@@ -207,6 +233,7 @@ class TrainingsDetailFragment : DialogFragment() {
         binding.trainingTitle.clearFocus()
         binding.trainingComment.clearFocus()
         binding.checkButton.visibility = View.GONE
+        isEdit = false // Reset edit state
     }
 
     private fun hideKeyboard() {
@@ -217,27 +244,13 @@ class TrainingsDetailFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
-            val height = dpToPx(810)
+            val height = dpToPx(810) // Consider making this dynamic or a percentage
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, height)
             setGravity(Gravity.BOTTOM)
-            setBackgroundDrawableResource(android.R.color.transparent)
-            setWindowAnimations(R.style.DialogSlideAnimation) // 👈 ВАЖНО!
+            setBackgroundDrawableResource(android.R.color.transparent) // Ensure this is intended
+            setWindowAnimations(R.style.DialogSlideAnimation)
         }
     }
-
-
-
-//    private fun dismissWithAnim(){
-//        val contentView = dialog?.window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
-//        contentView?.animate()
-//            ?.translationY(contentView.height.toFloat())
-//            ?.setDuration(300)
-//            ?.withEndAction{
-//                dismissAllowingStateLoss()
-//            }
-//            ?.start()
-//    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -250,5 +263,4 @@ class TrainingsDetailFragment : DialogFragment() {
         val formatter = DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale("ru"))
         return dateTime.format(formatter)
     }
-
 }

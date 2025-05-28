@@ -16,14 +16,15 @@ import com.example.vkr2.ui.AdaptersDirectory.SetsAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.ExerciseDetailFragment
 
 class SetsEditDialogFragment(
-    private val trainingId:Int,
+    private val trainingId: Int,
     private val exerciseId: Int,
     private val exerciseName: String,
     private val exerciseImagePath: String,
+    private val exerciseType: ExerciseType, // Добавляем тип упражнения
     private val sets: MutableList<SetEntity>,
     private val onAddSet: (SetEntity) -> Unit,
     private val onUpdateSet: (SetEntity) -> Unit,
-    private val onDeleteSet: (SetEntity)->Unit,
+    private val onDeleteSet: (SetEntity) -> Unit,
     ) : DialogFragment() {
 
     private var _binding: DialogAddSetBinding? = null
@@ -58,33 +59,19 @@ class SetsEditDialogFragment(
         }
 
         if (sets.isEmpty()) {
-            val dummy = SetEntity(
-                trainingId = trainingId,
-                exerciseId = exerciseId,
-                reps = 0,
-                weight = 0,
-                duration = null,
-                exerciseOrder = 0
-            )
+            val dummy = createNewSet(0) // Создаем dummy с учетом типа
             sets.add(dummy)
             onAddSet(dummy)
         }
         adapter = SetsAdapter(
             sets = sets,
+            exerciseType = exerciseType, // Передаем тип в адаптер
             onUpdateSet = { updatedSet -> onUpdateSet(updatedSet) },
             onDeleteSet = { removed ->
                 sets.remove(removed)
                 onDeleteSet(removed)
-                // если удалили последний — создаём dummy
                 if (sets.isEmpty()) {
-                    val fallback = SetEntity(
-                        trainingId = removed.trainingId,
-                        exerciseId = removed.exerciseId,
-                        reps = 0,
-                        weight = 0,
-                        duration = null,
-                        exerciseOrder = 0
-                    )
+                    val fallback = createNewSet(0) // Создаем dummy с учетом типа
                     sets.add(fallback)
                     onAddSet(fallback)
                 }
@@ -94,17 +81,8 @@ class SetsEditDialogFragment(
         binding.setsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.setsRecyclerView.adapter = adapter
 
-
-
         binding.buttonAddSet.setOnClickListener {
-            val newSet = SetEntity(
-                trainingId = sets.first().trainingId, // безопаснее использовать уже существующий
-                exerciseId = exerciseId,
-                reps = 0,
-                weight = 0,
-                duration = null,
-                exerciseOrder = sets.size
-            )
+            val newSet = createNewSet(sets.size) // Создаем новый сет с учетом типа
             adapter.addSet(newSet)
             onAddSet(newSet)
         }
@@ -116,12 +94,17 @@ class SetsEditDialogFragment(
 
             binding.setsRecyclerView.postDelayed({
                 val updatedSets = adapter.getCurrentSets()
-                    .filter { it.weight != 0 || it.reps != 0 }
+                    .filter { isSetValid(it) } // Используем новую функцию фильтрации
 
                 updatedSets.forEachIndexed { index, set ->
                     set.exerciseOrder = index
                     onUpdateSet(set)
                 }
+
+                // Удаляем невалидные сеты, если нужно (кроме последнего пустого)
+                val setsToDelete = adapter.getCurrentSets().filterNot { isSetValid(it) }
+                setsToDelete.forEach { onDeleteSet(it) }
+
 
                 dismiss()
             }, 100)
@@ -150,6 +133,25 @@ class SetsEditDialogFragment(
             .setOverlayColor(ContextCompat.getColor(requireContext(), R.color.blur_overlay))
     }
 
+    private fun createNewSet(order: Int): SetEntity {
+        return SetEntity(
+            trainingId = trainingId,
+            exerciseId = exerciseId,
+            reps = if (exerciseType != ExerciseType.CARDIO_DISTANCE) 0 else null,
+            weight = if (exerciseType == ExerciseType.STRENGTH) 0 else null,
+            exerciseOrder = order,
+            minutes = if (exerciseType != ExerciseType.STRENGTH) 0 else null,
+            seconds = if (exerciseType != ExerciseType.STRENGTH) 0 else null,
+            distanceKm = if (exerciseType == ExerciseType.CARDIO_DISTANCE) 0f else null
+        )
+    }
+    private fun isSetValid(set: SetEntity): Boolean {
+        return when (exerciseType) {
+            ExerciseType.STRENGTH -> (set.weight ?: 0) != 0 || (set.reps ?: 0) != 0
+            ExerciseType.CARDIO_DISTANCE -> (set.minutes ?: 0) != 0 || (set.seconds ?: 0) != 0 || (set.distanceKm ?: 0f) != 0f
+            ExerciseType.CARDIO_TIME_REPS -> (set.minutes ?: 0) != 0 || (set.seconds ?: 0) != 0 || (set.reps ?: 0) != 0
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -164,16 +166,8 @@ class SetsEditDialogFragment(
 
     override fun onStop() {
         super.onStop()
-
-        if (adapter.getCurrentSets().isEmpty()){
-            val dummySet = SetEntity(
-                trainingId = sets.firstOrNull()?.trainingId ?: 0,
-                exerciseId = exerciseId,
-                reps = 0,
-                weight = 0,
-                duration = null,
-                exerciseOrder = 0
-            )
+        if (adapter.getCurrentSets().none { isSetValid(it) } && adapter.getCurrentSets().isEmpty()) {
+            val dummySet = createNewSet(0)
             onAddSet(dummySet)
         }
     }

@@ -506,6 +506,62 @@ val MIGRATION_16_17 = object : Migration(16, 17) {
         db.execSQL("ALTER TABLE Sets ADD COLUMN distanceKm REAL")
     }
 }
+val MIGRATION_17_18 = object : Migration(17, 18) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE Exercises ADD COLUMN type TEXT NOT NULL DEFAULT 'STRENGTH'")
+        // Устанавливаем типы для кардио упражнений (по ID или Имени)
+        db.execSQL("UPDATE Exercises SET type = 'CARDIO_DISTANCE' WHERE ExercisesName IN ('Беговая дорожка', 'Эллипсоид', 'Велосипед', 'Степпер', 'Гребля')")
+        db.execSQL("UPDATE Exercises SET type = 'CARDIO_TIME_REPS' WHERE ExercisesName IN ('Скакалка', 'Скалолаз', 'Бег с высоким подниманием ног', 'Захлест голени')")
+
+    }
+}
+val MIGRATION_18_19 = object : Migration(18, 19) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "UPDATE Exercises SET ExercisesName = 'Бег с высоким подниманием ног' WHERE ExercisesName = 'Бег с высоким поднимание ног'"
+        )
+    }
+}
+val MIGRATION_19_20 = object : Migration(19, 20) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // 1. Создать новую таблицу без duration
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS Sets_temp (
+                setId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                trainingId INTEGER NOT NULL,
+                exerciseId INTEGER NOT NULL,
+                reps INTEGER,
+                weight INTEGER,
+                minutes INTEGER,
+                seconds INTEGER,
+                distanceKm REAL,
+                exerciseOrder INTEGER NOT NULL,
+                FOREIGN KEY(trainingId) REFERENCES Trainings(trainingId) ON DELETE CASCADE,
+                FOREIGN KEY(exerciseId) REFERENCES Exercises(ExercisesId) ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+        // 2. Скопировать данные (только нужные колонки)
+        db.execSQL("""
+            INSERT INTO Sets_temp (setId, trainingId, exerciseId, reps, weight, minutes, seconds, distanceKm, exerciseOrder)
+            SELECT setId, trainingId, exerciseId, reps, weight, minutes, seconds, distanceKm, exerciseOrder
+            FROM Sets
+        """.trimIndent())
+
+        // 3. Удалить старую таблицу
+        db.execSQL("DROP TABLE Sets")
+
+        // 4. Переименовать новую в Sets
+        db.execSQL("ALTER TABLE Sets_temp RENAME TO Sets")
+
+        // 5. Восстановить индексы, если были
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_Sets_exerciseId ON Sets(exerciseId)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_Sets_trainingId ON Sets(trainingId)")
+    }
+}
+
+
+
 
 
 
