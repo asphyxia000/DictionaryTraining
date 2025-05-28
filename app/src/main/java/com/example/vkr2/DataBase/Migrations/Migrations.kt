@@ -499,6 +499,14 @@ val MIGRATION_15_16 = object : Migration(15, 16) {
         }
     }
 }
+val MIGRATION_16_17 = object : Migration(16, 17) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE Sets ADD COLUMN minutes INTEGER")
+        db.execSQL("ALTER TABLE Sets ADD COLUMN seconds INTEGER")
+        db.execSQL("ALTER TABLE Sets ADD COLUMN distanceKm REAL")
+    }
+}
+
 
 
 

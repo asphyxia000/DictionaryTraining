@@ -13,6 +13,7 @@ material = "1.12.0"
 constraintlayout = "2.2.1"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
+mpandroidchart = "3.1.0"
 navigationFragmentKtx = "2.8.9"
 navigationUiKtx = "2.8.9"
 legacySupportV4 = "1.0.0"
@@ -42,6 +43,7 @@ androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+mpandroidchart = { module = "com.github.Philjay:mpandroidchart", version.ref = "mpandroidchart" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

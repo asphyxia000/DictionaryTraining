@@ -1,3 +1,4 @@
+// DashboardFragment.kt
 package com.example.vkr2.ui.dashboard
 
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.example.vkr2.ui.AdaptersDirectory.DashboardAdapter
 import com.example.vkr2.ui.AdaptersDirectory.ZamersAdapter
 import com.example.vkr2.ui.Notification_muscle_groups.Exercise_in_muscle_groups.InfoStatsExercise.PeriodSelection
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch // Import this
 
 class DashboardFragment : Fragment() {
 
@@ -34,43 +36,34 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
-        // Получаем контекст и скоуп для создания репозиториев
-        val context = requireContext().applicationContext
-        val scope = viewLifecycleOwner.lifecycleScope
-
-        val factory = DashboardViewModelFactory(
-            generalTrainingStatsRepository = GeneralTrainingStatsRepositoryImpl(context, scope),
-            bodyMeasurementsRepository = BodyMeasurementsRepositoryImpl(context, scope)
-        )
-
+        val bodyMeasurementsRepository = BodyMeasurementsRepositoryImpl(requireContext(), lifecycleScope)
+        val generalTrainingStatsRepository = GeneralTrainingStatsRepositoryImpl(requireContext(), lifecycleScope)
+        val factory = DashboardViewModelFactory(generalTrainingStatsRepository, bodyMeasurementsRepository)
         viewModel = ViewModelProvider(this, factory)[DashboardViewModel::class.java]
 
         zamerAdapter = ZamersAdapter(emptyList()) { bodyPart, isLeft ->
-            BSDZamers.newInstance(bodyPart, isLeft).show(parentFragmentManager, "zamer_dialog")
+            BSDZamers.newInstance(bodyPart, isLeft).show(childFragmentManager, "BodyPartMeasurement")
         }
-
         statsAdapter = DashboardAdapter(emptyList())
-        // Настройка LayoutManager для замеров и статистики
+
         binding.view3.layoutManager = LinearLayoutManager(requireContext())
         binding.viewall.layoutManager = LinearLayoutManager(requireContext())
         binding.view3.adapter = zamerAdapter
         binding.viewall.adapter = statsAdapter
 
-        collectData()
+        // Moved from init (correct place for observation)
+        lifecycleScope.launch {
+            viewModel.bodyMeasurementsUI.collect { list ->
+                zamerAdapter.updateData(list)
+            }
+        }
+
         setupPeriodSelector()
-        collectStatsForPeriod()
+        collectStatsForPeriod() // This already exists
 
         return binding.root
     }
 
-
-    private fun collectData() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.getBodyMeasurementsUI().collect {
-                zamerAdapter.updateData(it)
-            }
-        }
-    }
 
     private fun setupPeriodSelector(){
         val items= listOf(

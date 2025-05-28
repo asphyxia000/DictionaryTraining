@@ -112,12 +112,11 @@ class ExerciseListFragment : Fragment() {
         binding.btnAdd.visibility = View.GONE
         binding.cancelBtn.translationX = 0f
 
-        // ✅ Настраиваем СВОЙ Toolbar (а не supportActionBar)
         binding.dialogToolbar.apply {
             title = arguments?.getString("selectedGroupName") ?: "Упражнения"
-            setNavigationIcon(R.drawable.ic_arrow_back) // 👈 Стандартная стрелка назад
+            setNavigationIcon(R.drawable.ic_arrow_back)
             setNavigationOnClickListener {
-                findNavController().popBackStack() // 👈 Назад при нажатии
+                findNavController().popBackStack()
             }
         }
 

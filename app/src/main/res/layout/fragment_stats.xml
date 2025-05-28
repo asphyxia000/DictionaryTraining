@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:id="@+id/groupbtnperiod"
             android:layout_width="match_parent"
@@ -62,6 +63,85 @@
                 android:contentDescription="Вперёд"/>
 
         </LinearLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/chartCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?android:colorBackground"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Метрика и переключатель -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/metricInputLayout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spinMetric"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:padding="12dp"
+                            android:background="@null"
+                            android:textColorHint="?attr/colorOnSurfaceVariant"
+                            android:popupBackground="@drawable/dropdown_item_background" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <ImageButton
+                        android:id="@+id/chartButton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_graph"
+                        android:background="@android:color/transparent"
+                        />
+<!--                    <Switch-->
+<!--                        android:id="@+id/chartSwitch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Линия / Столбцы"-->
+<!--                        android:textColor="@android:color/white"-->
+<!--                        android:thumbTint="@android:color/darker_gray"-->
+<!--                        android:trackTint="@android:color/darker_gray"-->
+<!--                        android:checked="false"-->
+<!--                        tools:ignore="UseSwitchCompatOrMaterialXml" />-->
+                </LinearLayout>
+
+                <!-- Графики -->
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChartStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChartStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
         <LinearLayout
             android:id="@+id/statsGroupParent"
             android:layout_width="match_parent"

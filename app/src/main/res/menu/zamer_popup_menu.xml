@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_delete_zamer"
-        android:title="Удалить бэкап"
+        android:title="Удалить замер"
         android:icon="@android:drawable/ic_menu_delete"
         app:showAsAction="ifRoom" />
 </menu>

@@ -63,9 +63,10 @@ dependencies {
     implementation("com.kizitonwose.calendar:view:2.6.1")
     implementation("com.github.Dimezis:BlurView:version-2.0.6")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.mpandroidchart)
+
     implementation(libs.gson)
     implementation(libs.androidx.core.splashscreen)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

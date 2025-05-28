@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter
 class ZamersItemAdapter(
     private val bodyPart: String,
     private val isLeft: Boolean,
+    private val onEditClick: (BodyMeasurementsEntity) -> Unit,
     private val onDeleteClick: (BodyMeasurementsEntity) -> Unit
 ) : RecyclerView.Adapter<ZamersItemAdapter.ZamerViewHolder>() {
 
@@ -23,7 +24,8 @@ class ZamersItemAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(data: List<BodyMeasurementsEntity>) {
-        items = data.sortedByDescending { it.date }
+        items = data.sortedWith(compareByDescending<BodyMeasurementsEntity> { it.date }
+            .thenByDescending { it.id })
         notifyDataSetChanged()
     }
 
@@ -40,10 +42,15 @@ class ZamersItemAdapter(
 
         holder.binding.optionsMenu.setOnClickListener { v ->
             val popup = PopupMenu(v.context, v, Gravity.END, 0, R.style.MyPopupMenu)
-            popup.menuInflater.inflate(R.menu.zamer_popup_menu, popup.menu)
+            popup.menu.add(0, 1, 0, "Редактировать")
+            popup.menu.add(0, 2, 1, "Удалить")
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
-                    R.id.menu_delete_zamer -> {
+                    1 -> {
+                        onEditClick(item)
+                        true
+                    }
+                    2 -> {
                         onDeleteClick(item)
                         true
                     }
@@ -52,6 +59,7 @@ class ZamersItemAdapter(
             }
             popup.show()
         }
+
     }
 
     override fun getItemCount(): Int = items.size
@@ -66,7 +74,7 @@ class ZamersItemAdapter(
             "Предплечья" -> if (isLeft) measurement.forearmsLeft else measurement.forearmsRight
             "Бицепсы" -> if (isLeft) measurement.bicepsLeft else measurement.bicepsRight
             "Трицепсы" -> if (isLeft) measurement.tricepsLeft else measurement.tricepsRight
-            "Бедра" -> if (isLeft) measurement.bedroLeft else measurement.bicepsRight
+            "Бедра" -> if (isLeft) measurement.bedroLeft else measurement.begroRight
             "Икры" -> if (isLeft) measurement.ikriLeft else measurement.ikriRight
             else -> null
         }

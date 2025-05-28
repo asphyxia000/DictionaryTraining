@@ -23,5 +23,8 @@ data class SetEntity(
     var reps:Int?,
     var weight:Int?,
     var duration:Int?,
-    var exerciseOrder:Int
+    var exerciseOrder:Int,
+    val minutes: Int? = null,
+    val seconds: Int? = null,
+    val distanceKm: Float? = null
 )
